@@ -1,5 +1,9 @@
 # <img src="assets/bijective_banner.svg" alt="Bijective" width="100%">
 
+[![Website](https://img.shields.io/badge/WEBSITE-111111?style=for-the-badge)](https://www.bijectivelabs.dev/bijective)
+[![Docs](https://img.shields.io/badge/DOCS-111111?style=for-the-badge)](https://docs.bijectivelabs.dev)
+[![Insight](https://img.shields.io/badge/INSIGHT-111111?style=for-the-badge)](https://www.bijectivelabs.dev/insights)
+
 [![CI](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml)
 [![Licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
 ![Rust 1.97.1](https://img.shields.io/badge/rust-1.97.1-orange?logo=rust)
@@ -8,8 +12,8 @@
 
 | Branch   | Version | Build |
 | :------- | :------ | :---- |
-| `master` | 0.1.0 | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
-| `dev`    | 0.1.0, in development   | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `master` | 0.1.0, the latest release | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `dev`    | development, the default branch | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 
 | Platform                      | Rust   | Python      | Notes |
 | :---------------------------- | :----- | :---------- | :---- |
@@ -93,8 +97,10 @@ Early development: version 0.1.0, and interfaces will change before 1.0. Status 
 
 ### Branches
 
-- `master`: the latest released version.
-- `dev`: active development. Every change passes the same gates as a release.
+- `master`: the latest released version, and the most stable branch. Nothing is written to it
+  directly: it moves only by a pull request from `dev` that passes CI, at a release.
+- `dev`: the default branch, where development happens and pull requests land. Every change
+  passes the same gates as a release.
 
 ## Engineering practices
 
@@ -176,7 +182,8 @@ what to include and the security model are in [SECURITY.md](SECURITY.md).
 
 ## Contributing
 
-Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Run the gates before a pull request:
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[code of conduct](CODE_OF_CONDUCT.md). Pull requests target `dev`. Run the gates before opening one:
 `bash scripts/ci/run_gates.sh`.
 
 ## License
