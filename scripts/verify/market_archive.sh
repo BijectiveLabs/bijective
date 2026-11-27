@@ -105,7 +105,13 @@ fi
 flags_of crashed
 "$DATA_ENGINE" "${FLAGS[@]}" --recording "$FIXTURE" --drill-seconds 30 >"${WORK}/crashed.log" 2>&1 &
 pid=$!
-sleep 0.5
+# Killed once the journal holds frames, not after a fixed wait: a journal synced per batch
+# (decision 0019) ingests the whole recording within any wait long enough for a slow host.
+journal="${WORK}/crashed/frames-${VENUE}/000000000000.seg"
+for _ in $(seq 1 2000); do
+    [ "$(stat -c %s "$journal" 2>/dev/null || echo 0)" -gt 4096 ] && break
+    sleep 0.005
+done
 if kill -9 "$pid" 2>/dev/null; then
     wait "$pid" 2>/dev/null
     if engine crashed --recording "$FIXTURE" --drill-seconds 0 >/dev/null 2>&1; then
