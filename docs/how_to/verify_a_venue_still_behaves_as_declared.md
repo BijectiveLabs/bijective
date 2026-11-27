@@ -5,8 +5,7 @@ Drill: scripts/verify/venue_assurance.sh
 Applies-To: before a venue is first traded, after any venue announcement, and on the cadence the
             venue's profile declares
 
-A profile can be drafted from the same published rules with `bijective-profile <venue>
-<instrument,...> <url> --out <dir>`; the draft is unverified until this check confirms it.
+A profile can be drafted from the same published rules with `bijective-profile <venue> <instrument,...> <url> --out <dir>`; the draft is unverified until this check confirms it.
 
 ## Why this is not a gate
 

@@ -48,8 +48,7 @@ are implemented against these documents but not yet written out here.
 - **HTTP 403 "access too frequent" means the IP has exceeded the limit.** The venue says to end all
   HTTP sessions and wait at least 10 minutes; the ban lifts automatically. The adapter reads a 403 as
   a rate limit with a 600-second wait, not as a refused credential (a refused key answers 401).
-- The API limit is per second per UID, answered with `"retCode": 10006, "retMsg": "Too many
-  visits!"`, and every answer carries `X-Bapi-Limit-Status`, `X-Bapi-Limit` and
+- The API limit is per second per UID, answered with `"retCode": 10006, "retMsg": "Too many visits!"`, and every answer carries `X-Bapi-Limit-Status`, `X-Bapi-Limit` and
   `X-Bapi-Limit-Reset-Timestamp`. The adapter does not read these yet; whether a `10006` arrives as
   HTTP 200 or 429 is to be observed.
 ## Order terms (Place Order, read 2026-11-19)

@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Proposed, 2026-11-28. Not built ([roadmap](../../ROADMAP.md), Next item 8) |
+| Status | Accepted and built, 2026-11-28 (`crates/mcp`, [connect a research agent](../how_to/connect_a_research_agent.md)) |
 | Extends | The research programs (`bijective-backtest`, `bijective-report`, `bijective-promote`), the market archive, the console's tables, the sandbox (decision 0003) |
 
 ## Context
@@ -20,26 +20,32 @@ new path.
 ## Decision
 
 1. **One program, `bijective-mcp`, started by the agent's host on the node.** It speaks MCP over
-   stdio: `initialize`, `tools/list` and `tools/call`. It opens no network port, so who can start
-   it is who can log in to the node.
+   stdio: `initialize`, `ping`, `tools/list` and `tools/call`. It opens no network port, so who can
+   start it is who can log in to the node. Every path a tool receives is resolved inside one
+   workspace directory named at start, and a path outside it is refused.
 2. **Tools are the research programs, not new logic.** Each tool runs what a person would run and
    returns its output as structured content:
 
    | Tool | Runs | Writes |
    |---|---|---|
-   | `markets` | the archive's manifest | nothing |
-   | `read_panel` | a console table (`/api/panels/<panel>` format) from the record | nothing |
-   | `backtest` | `bijective-backtest <strategy> --config <file>` | a backtest record directory of its own |
-   | `report` | `bijective-report <store> <strategy> <confidence>` | nothing |
-   | `promotion_status` | the promotion stage of a strategy, read from the run ledger | nothing |
+   | `platform` | nothing: what the server offers and which programs it found | nothing |
+   | `panels`, `panel` | `bijective-console --serve-one` on loopback, asked for `/api/panels` | nothing |
+   | `report` | `bijective-report <store> [<strategy> <confidence>]` | nothing |
+   | `promotion` | `bijective-promote <store> <strategy> <confidence>` | nothing |
+   | `new_strategy` | `bijective-backtest --new <path>` | a strategy and a sample market in the workspace |
+   | `backtest` | `bijective-backtest <strategy> [--market] [--store] [--config]` | the backtest's record |
 
-3. **Read-only by default.** `backtest` is offered only when the operator starts the server with
-   `--allow-backtest`. A strategy the agent wrote runs in the sandbox like any other: no network, no
+   The programs run as children, bounded in time, and are ended with everything they started.
+   No engine is linked, so the server's dependency graph holds `serde_json` and nothing else.
+
+3. **Read-only by default.** `new_strategy` and `backtest` are offered only when the operator
+   starts the server with `--allow-backtest`. A strategy the agent wrote runs in the sandbox like any other: no network, no
    credentials, bounded memory and time.
 4. **No route to an order.** The server holds no credential and no operator key. It cannot issue a
-   signed command, start a paper or live session, or write a proposal stream. The `Agent
-   environment` gate is extended to refuse any dependency from the server on the secrets broker,
-   a venue, the limits or the control engine.
+   signed command, start a paper or live session, or write a proposal stream. The crate sits in
+   the strategy area (`scripts/ci/areas.txt`), so the `Agent environment` gate refuses any
+   dependency from it on the secrets broker, a venue, the limits, the risk code or the control
+   engine.
 5. **The protocol is written by hand over `serde_json`**, which the tree already carries. The
    surface used is three methods and one transport. An SDK is adopted when a second transport or
    protocol feature is needed.

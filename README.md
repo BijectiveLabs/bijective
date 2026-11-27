@@ -59,6 +59,7 @@ Early development: version 0.1.0, and interfaces will change before 1.0. Status 
 | Simulated venue, paper runs | Built: orders, fills, positions and reconciliation run the live code with no order leaving the node. A paper venue is rebuilt from its record at start (decision 0018) and reconciled once more when the run stops |
 | Backtest | Built: proposals measured against the recorded market and, given a node configuration, placed on simulated venues through the order path (decision 0015, stage 1). The strategy is not yet told of its fills in a backtest (stage 2) |
 | Strategy sandbox, live sessions, promotion stages | Built (Linux, cgroup v2) |
+| MCP server for research agents | Built: `bijective-mcp` runs the research programs for an agent, read-only by default, with no route to an order (decision 0020) |
 | Market history from a client's CSV or JSON Lines file | Built for top-of-book rows (decision 0016, stage 1) |
 | Reconciliation, execution cost, failure detection | Reconciliation on a cadence and on venue reports, and an execution cost table against the book at the decision, built. Missing-event evaluation planned |
 | Operator console | Built: one console for every run mode (decision 0017), TLS with client certificates, signed commands, tables and an event stream for programs, OpenMetrics |

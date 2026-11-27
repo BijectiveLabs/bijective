@@ -44,7 +44,10 @@ It reflects the tree as of 2026-11-27.
 - Market capture sized by measurement: the market journal is made durable per batch of what is
   already waiting (decision 0019), and the technologies examined and not adopted are recorded
   with their evidence ([Technology](docs/concepts/technology.md)).
-- Thirty-three crates along the architectural layers, each with one reason to change.
+- An MCP server for research agents (decision 0020): an agent writes, runs and judges strategies
+  through the research programs, with no route to an order
+  ([connect a research agent](docs/how_to/connect_a_research_agent.md)).
+- Thirty-four crates along the architectural layers, each with one reason to change.
 
 ## Next
 
@@ -61,13 +64,6 @@ It reflects the tree as of 2026-11-27.
 6. **Exchange calendars** for venues that trade in sessions, so simulated and backtest runs keep
    the same hours as the venue.
 7. **Proactive rate limiting** per venue, as configuration rather than reaction.
-8. **An MCP server for research agents.** A Model Context Protocol server on the node, so an AI
-   agent a client already uses can research strategies against the platform: read the market
-   archive, run backtests and paper runs, and read their results and evaluation. The agent reaches
-   the platform through the paths a person uses. It proposes through a strategy in the sandbox,
-   holds no credential, and has no route to a live order that bypasses risk evaluation and an
-   operator's signed promotion. Read-only by default
-   ([decision 0020](docs/decisions/0020-mcp-server-for-research-agents.md), proposed).
 
 ## Scope
 

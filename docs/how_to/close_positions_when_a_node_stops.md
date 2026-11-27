@@ -25,8 +25,7 @@ the node is stopped, and so is every position on a venue whose adapter refuses s
 1. **Start the node again.** It starts halted, reconciles every venue, and its first pass withdraws
    every resting order that could add exposure. Reduce-only exits on a venue that enforces them are
    left working.
-2. **Close what is held, if the stop was not planned:** `bijective issue <store> <operator> <role>
-   <key> flatten`. The node places one reduce-only market order per position in its record, past the
+2. **Close what is held, if the stop was not planned:** `bijective issue <store> <operator> <role> <key> flatten`. The node places one reduce-only market order per position in its record, past the
    risk figures (decision 0010). Read the outcome under Audit on the console.
 3. **If the node cannot start**, cancel the orders and close the positions at the venue by hand.
    The node then reads them as changes made outside the platform and halts on its next start until

@@ -60,8 +60,7 @@ Markdown by appending `.md`, so a re-read can diff the documents.
   verifying contract `0xe3333700cA9d93003F00f0F71f8515005F6c00Aa` for a book that returns
   `version: "v2"`; version `"2"` with `0xE111180000d2663C0091e4f400237545B87B996B` for a CTF book
   without negative risk and `0xe2222d279d744050d28e00520010520000310F59` with it. The order type
-  is `Order(uint256 salt,address maker,address signer,uint256 tokenId,uint256 makerAmount,uint256
-  takerAmount,uint8 side,uint8 signatureType,uint256 timestamp,bytes32 metadata,bytes32 builder)`.
+  is `Order(uint256 salt,address maker,address signer,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint8 side,uint8 signatureType,uint256 timestamp,bytes32 metadata,bytes32 builder)`.
   `expiration` travels in the request body and is not signed.
 - **Market stream** (Stream): `wss://ws-subscriptions-clob.polymarket.com/ws/market`; subscribe
   with `{"assets_ids": [...], "type": "market"}`; send the text frame `PING` every 10 seconds and

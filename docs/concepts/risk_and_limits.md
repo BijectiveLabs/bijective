@@ -239,8 +239,7 @@ placed, valued at the same marks as the portfolio.
   named on, at the strategy level. A node that holds positions it did not place therefore
   judges every desk and strategy against them until they are closed.
 - **An adjustment may name its owner.** A risk officer who accepts a position no fill explains
-  may name the desk, and the strategy, it belongs to (`bijective issue ... adjust-position <venue>
-  <instrument> <side> <quantity> <price> --desk <desk> --strategy <name> <reason>`). It then counts
+  may name the desk, and the strategy, it belongs to (`bijective issue ... adjust-position <venue> <instrument> <side> <quantity> <price> --desk <desk> --strategy <name> <reason>`). It then counts
   as that owner's, like a fill, and no longer against everyone. A desk that is not declared is read
   as no owner, so a misspelt desk cannot leave the desk that was meant understated.
 - **Measured whole or not at all.** No desk or strategy figure is produced when the book could not

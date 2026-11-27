@@ -65,8 +65,7 @@ from its profile alone: no credential is read and no order leaves the node.
   evidence and records each fill once. A paper node reconciles on every pass, because the simulated
   venue is local and costs no venue a request.
 - **The sandbox account** ([decision 0003](../decisions/0003-sandbox.md)). Each venue starts
-  with the balances its configuration declares (`"sandbox": { "<venue>": { "<currency>":
-  "<money at eight decimals>" } }`); a venue without them is withdrawn, never given a default. A
+  with the balances its configuration declares (`"sandbox": { "<venue>": { "<currency>": "<money at eight decimals>" } }`); a venue without them is withdrawn, never given a default. A
   buy the account cannot pay for, fee included, is rejected (`InsufficientMargin`), an open buy
   reserves what it may cost, and every fill moves cash and carries the fee charged at the venue's
   declared maker or taker rate. A venue with no declared fee charges none.
