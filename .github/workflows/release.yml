@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       # The pin is read from rust-toolchain.toml and validated as a bare version, as in CI.
       - name: Read and validate the pinned toolchain
@@ -64,7 +64,7 @@ jobs:
           (cd dist && sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256")
           echo "name=${name}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ steps.assemble.outputs.name }}
           path: |
@@ -76,7 +76,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Build the node image
         run: docker build --tag bijective:candidate .
@@ -84,7 +84,7 @@ jobs:
       - name: Save the image
         run: docker save bijective:candidate | gzip > bijective-image.tar.gz
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: bijective-image
           path: bijective-image.tar.gz
@@ -101,7 +101,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Check the tag against the declared version
         id: version
@@ -116,7 +116,7 @@ jobs:
           fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           path: dist
 
