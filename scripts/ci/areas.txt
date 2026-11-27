@@ -36,6 +36,7 @@ crates/limits control
 crates/evaluation strategy
 crates/strategy_engine strategy
 crates/sandbox strategy
+crates/mcp strategy
 crates/console operational
 crates/deployment operational
 crates/ordering operational
