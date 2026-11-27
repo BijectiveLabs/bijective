@@ -1,26 +1,47 @@
-<p align="center"><img src="assets/bijective_banner.svg" alt="Bijective" width="720"></p>
+# <img src="assets/bijective_banner.svg" alt="Bijective" width="100%">
 
-<p align="center">
-  <a href="https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml"><img src="https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue" alt="Licence: Apache-2.0"></a>
-  <img src="https://img.shields.io/badge/rust-1.97.1-orange" alt="Rust 1.97.1">
-  <img src="https://img.shields.io/badge/status-pre--release-lightgrey" alt="Status: pre-release">
-</p>
+[![CI](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml)
+[![Licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
+![Rust 1.97.1](https://img.shields.io/badge/rust-1.97.1-orange?logo=rust)
+![Python 3.12 to 3.14](https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab?logo=python&logoColor=white)
+![Status: pre-release](https://img.shields.io/badge/status-pre--release-lightgrey)
 
-# Bijective
+| Branch   | Version | Build |
+| :------- | :------ | :---- |
+| `master` | 0.1.0, not yet released | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `dev`    | 0.1.0, in development   | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 
-A self-hosted, multi-asset trading platform: crypto spot and perpetuals on centralised and
-decentralised venues, prediction-market outcomes and US equities. It is built so that no decision
-reaches a venue without passing risk evaluation, and every decision can be reconstructed
+| Platform                      | Rust   | Python      | Notes |
+| :---------------------------- | :----- | :---------- | :---- |
+| Linux (x86_64)                | 1.97.1 | 3.12 to 3.14 | Built and tested in CI on every push |
+| Windows 11 through WSL 2      | 1.97.1 | 3.12 to 3.14 | A Linux host with systemd ([run a node on a Windows workstation](docs/how_to/run_a_node_on_a_windows_workstation.md)) |
+| Container (Linux)             | 1.97.1 | not included | Data and control engines, no strategy sandbox ([containers](docs/concepts/deployment.md#containers)) |
+
+macOS and native Windows are not supported: the strategy sandbox is built on Linux namespaces and
+cgroup v2.
+
+- **Documentation**: [docs/](docs/index.md)
+- **Roadmap**: [ROADMAP.md](ROADMAP.md)
+- **Security**: [SECURITY.md](SECURITY.md)
+
+## Introduction
+
+Bijective is a self-hosted, multi-asset trading platform: crypto spot and perpetuals on centralised
+and decentralised venues, prediction-market outcomes and US equities. It is built so that no
+decision reaches a venue without passing risk evaluation, and every decision can be reconstructed
 afterwards.
 
 The core is written in Rust. Strategies run as separate, sandboxed processes and may be written in
-any language that reads and writes lines of JSON. A Python library is provided.
+any language that reads and writes lines of JSON. A Python library is provided. Backtest, paper and
+live run the same strategy program through the same order path and write the same record.
+
+The operator owns the node, the keys, the data and the record. Nothing calls home, and every format
+the node writes is documented, so everything it holds can be read without anything else from us.
 
 ## Status
 
 Early development. No version has been released and interfaces will change. Status as of
-2026-11-27.
+2026-11-27, with the evidence for each venue on its [integration page](docs/integrations/index.md).
 
 | Area | State |
 |---|---|
@@ -54,6 +75,48 @@ Early development. No version has been released and interfaces will change. Stat
   venue, never assumed.
 - **One strategy code path.** Backtest, paper and live run the same strategy program through the
   same supervisor and write the same record.
+
+## Versioning and releases
+
+> **Bijective is in early development.** No version has been released yet. Until 1.0, a minor
+> version may change an interface, a format or a flag. Every such change is stated in the release
+> notes with the action an operator must take.
+
+- **Version numbers** follow [Semantic Versioning](https://semver.org). The platform version is the
+  one the deployment manifest declares, and every runbook is bound to it (`Runbooks` gate).
+- **Release notes** are in [RELEASES.md](RELEASES.md): what changed, and any action an operator must
+  take before or after upgrading.
+- **Release artefacts** are built and verified by `.github/workflows/release.yml`: the binaries, the
+  generated units, the strategy library and a recorded digest of each file, checked before anything
+  is unpacked ([verify a release](docs/how_to/verify_a_release.md)). Publication starts with the
+  first release.
+
+### Branches
+
+- `master`: the latest released version.
+- `dev`: active development. Every change passes the same gates as a release.
+
+## Engineering practices
+
+What an operator relies on is checked by a machine on every push, not by a reviewer's memory. The
+gate runner (`scripts/ci/run_gates.sh`) runs 41 gates, and a gate that cannot run is a failure. The
+full list is in [Quality gates](docs/developer_guide/ci_gates.md). Among them:
+
+- **The order path is closed.** An order cannot be submitted without a clearance that only the risk
+  evaluation mints, and only a live session writes proposals.
+- **Replay is exact.** The same record replays to byte-identical outputs, and the market archive
+  rebuilds byte for byte from the journal and survives a killed process.
+- **Recovery is drilled.** An interrupted start leaves the platform halted, a backup restores and
+  verifies, and the keystore seal holds.
+- **No floating point for money**, no `unsafe` code in any crate, and no outbound network connection
+  above the adapter contract.
+- **Dependencies are accounted for.** Every package in `Cargo.lock` is attested with its licence,
+  only permissive licences are accepted, and the third-party notices match the attestation.
+- **Documentation is checked against the tree.** Runbooks name drills that exist, the gate table
+  lists exactly what the runner executes, and every venue adapter cites its sources with a date.
+
+Technology choices are made by measurement, and the ones examined and not adopted are recorded
+with their evidence in [Technology](docs/concepts/technology.md#measured-and-not-adopted).
 
 ## Repository layout
 
@@ -108,7 +171,13 @@ stream at `/api/events` and as OpenMetrics at `/metrics`. See
 
 ## Security
 
-Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
+Report a vulnerability privately through GitHub Security Advisories, never in a public issue. Scope,
+what to include and the security model are in [SECURITY.md](SECURITY.md).
+
+## Contributing
+
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Run the gates before a pull request:
+`bash scripts/ci/run_gates.sh`.
 
 ## License
 
