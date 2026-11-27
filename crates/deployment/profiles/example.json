@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "venue": "a-venue",
+  "verified_at": null,
+  "transports": {
+    "stream": {
+      "funding": {
+        "model": "published",
+        "interval_ns": "28800000000000"
+      },
+      "data_classes": [
+        "top-of-book",
+        "depth"
+      ],
+      "max_staleness_ns": "40000000000"
+    }
+  },
+  "reduce_only": "fill-time-clamp",
+  "order_types": [
+    {
+      "name": "limit",
+      "native": true
+    }
+  ],
+  "instruments": [
+    {
+      "symbol": "BTCUSDT",
+      "id": "BTCUSDT",
+      "kind": "perpetual",
+      "settlement_currency": "usdt",
+      "quote_currency": "usdt",
+      "base_currency": "btc",
+      "precision": {
+        "price_scale": 2,
+        "quantity_scale": 3,
+        "price_tick": "10",
+        "quantity_lot": "1",
+        "price_validity": {
+          "rule": "increment-only"
+        }
+      },
+      "minimum_size": "1",
+      "minimum_notional": "500",
+      "status": "trading"
+    }
+  ],
+  "identifier_rules": {
+    "allowed": "abcdefghijklmnopqrstuvwxyz0123456789-",
+    "max_len": 36
+  },
+  "transformations": [],
+  "support": {
+    "venue": "a-venue",
+    "depth": "full",
+    "debuggable_to_root_cause": true
+  }
+}

@@ -1,0 +1,32 @@
+# Alpaca venue adapter: US equities over the Trading API.
+
+[package]
+name = "bijective-venue-alpaca"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_venue_alpaca"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-venue = { path = "../../venue" }
+bijective-common = { path = "../../common" }
+bijective-model = { path = "../../model" }
+bijective-lifecycle = { path = "../../lifecycle" }
+bijective-secrets-broker = { path = "../../secrets_broker" }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "macros", "sync"] }
+bijective-venue-socket = { path = "../socket" }
+futures-util = "0.3"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+reqwest = { version = "=0.13.4", default-features = false, features = ["rustls-no-provider", "http2"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,22 @@
+[package]
+name = "bijective-serialization"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_serialization"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-event-store = { path = "../event_store" }
+bijective-authority = { path = "../authority" }
+bijective-model = { path = "../model" }
+
+[dev-dependencies]
+bijective-event-store = { path = "../event_store" }
+
+[lints.rust]
+unsafe_code = "forbid"

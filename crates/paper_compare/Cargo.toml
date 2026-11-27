@@ -1,0 +1,22 @@
+# What two runs decided, and where they differ.
+# Operational: reads control events after the fact; the strategy engine may not reach control.
+
+[package]
+name = "bijective-paper-compare"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-control-engine = { path = "../control_engine" }
+bijective-event-store = { path = "../event_store" }
+bijective-model = { path = "../model" }
+bijective-venue = { path = "../venue" }
+
+[lints.rust]
+unsafe_code = "forbid"

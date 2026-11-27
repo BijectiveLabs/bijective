@@ -1,0 +1,43 @@
+# The console - the operator surface, one page per group of panels.
+# Optional: off means visibility stops, never function. Reads the engines' wire formats one way.
+# Holds no authoritative state: everything shown is folded from the streams.
+
+[package]
+name = "bijective-console"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_console"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-console"
+path = "src/main.rs"
+
+[dependencies]
+bijective-archive = { path = "../archive" }
+bijective-event-store = { path = "../event_store" }
+bijective-serialization = { path = "../serialization" }
+bijective-control-engine = { path = "../control_engine" }
+bijective-data-engine = { path = "../data_engine" }
+bijective-venue = { path = "../venue" }
+bijective-risk = { path = "../risk" }
+bijective-limits = { path = "../limits" }
+bijective-lifecycle = { path = "../lifecycle" }
+bijective-model = { path = "../model" }
+bijective-authority = { path = "../authority" }
+bijective-common = { path = "../common" }
+bijective-deployment = { path = "../deployment" }
+bijective-cli = { path = "../cli" }
+bijective-identity = { path = "../identity" }
+ring = "0.17"
+serde_json = "1"
+# Server side only, with the provider the adapters already use; no other TLS stack in the tree.
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+
+[lints.rust]
+unsafe_code = "forbid"

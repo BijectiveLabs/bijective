@@ -1,0 +1,31 @@
+[package]
+name = "bijective-evaluation"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_evaluation"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-promote"
+path = "src/bin/bijective-promote.rs"
+
+[[bin]]
+name = "bijective-report"
+path = "src/bin/bijective-report.rs"
+
+[dependencies]
+bijective-serialization = { path = "../serialization" }
+bijective-event-store = { path = "../event_store" }
+bijective-strategy-engine = { path = "../strategy_engine" }
+bijective-model = { path = "../model" }
+bijective-common = { path = "../common" }
+
+[dev-dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

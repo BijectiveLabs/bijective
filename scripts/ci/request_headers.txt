@@ -1,0 +1,15 @@
+# Header names an adapter may send. Authentication and content type only.
+# A header that identifies the software to the venue for revenue is not authentication and is not
+# listed: see docs/concepts/commercial_attribution.md before adding any line here.
+X-BAPI-API-KEY
+X-BAPI-TIMESTAMP
+X-BAPI-RECV-WINDOW
+X-BAPI-SIGN
+Content-Type
+POLY_ADDRESS
+POLY_API_KEY
+POLY_PASSPHRASE
+POLY_SIGNATURE
+POLY_TIMESTAMP
+APCA-API-KEY-ID
+APCA-API-SECRET-KEY

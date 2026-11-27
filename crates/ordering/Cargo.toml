@@ -1,0 +1,29 @@
+# What the platform's own record says about the order things happened in.
+# A reader: opens nothing, takes no lock, changes nothing. research integrity fill half.
+
+[package]
+name = "bijective-ordering"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-check-ordering"
+path = "src/bin/check_ordering.rs"
+
+[dependencies]
+bijective-control-engine = { path = "../control_engine" }
+bijective-event-store = { path = "../event_store" }
+
+[dev-dependencies]
+bijective-model = { path = "../model" }
+bijective-serialization = { path = "../serialization" }
+bijective-venue = { path = "../venue" }
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,43 @@
+# Data Engine: its own process so a malformed venue message cannot reach the Control Engine.
+
+[package]
+name = "bijective-data-engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_data_engine"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-data-engine"
+path = "src/main.rs"
+
+# Operator retention: removes journal segments a verified archive already holds.
+[[bin]]
+name = "bijective-journal"
+path = "src/bin/journal.rs"
+
+# Market history from a client's file (decision 0016).
+[[bin]]
+name = "bijective-import"
+path = "src/bin/import.rs"
+
+[dependencies]
+bijective-model = { path = "../model" }
+bijective-venue = { path = "../venue" }
+bijective-serialization = { path = "../serialization" }
+bijective-common = { path = "../common" }
+bijective-event-store = { path = "../event_store" }
+bijective-venue-registry = { path = "../adapters/registry" }
+bijective-secrets-broker = { path = "../secrets_broker" }
+bijective-archive = { path = "../archive" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "signal"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints.rust]
+unsafe_code = "forbid"

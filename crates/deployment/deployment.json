@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "platform_version": "0.1.0",
+  "programs": [
+    {
+      "name": "data-engine",
+      "binary": "/opt/bijective/bin/bijective-data-engine",
+      "class": "core",
+      "arguments": [
+        "--store",
+        "/var/lib/bijective/store",
+        "--readiness",
+        "/run/bijective/data-engine.json",
+        "--venue",
+        "${BIJECTIVE_VENUE}",
+        "--recording",
+        "${BIJECTIVE_RECORDING}"
+      ],
+      "after": [],
+      "memory_max_mb": 2048,
+      "stop_timeout_seconds": 30,
+      "writes": [
+        "/var/lib/bijective/store",
+        "/run/bijective"
+      ]
+    },
+    {
+      "name": "control-engine",
+      "binary": "/opt/bijective/bin/bijective-control-engine",
+      "class": "core",
+      "arguments": [
+        "--store",
+        "/var/lib/bijective/store",
+        "--readiness",
+        "/run/bijective/control-engine.json",
+        "--config",
+        "/etc/bijective/config.json",
+        "--keystore",
+        "/var/lib/bijective/keystore.bjks",
+        "--credential",
+        "bijective-init",
+        "--mode",
+        "live",
+        "--operators",
+        "/etc/bijective/operators.json"
+      ],
+      "after": [
+        "data-engine"
+      ],
+      "memory_max_mb": 1024,
+      "stop_timeout_seconds": 60,
+      "writes": [
+        "/var/lib/bijective/store",
+        "/run/bijective"
+      ],
+      "credentials": [
+        "bijective-init:/etc/bijective/credentials/bijective-init"
+      ]
+    },
+    {
+      "name": "operational-host",
+      "binary": "/opt/bijective/bin/bijective-operational-host",
+      "class": "operational",
+      "arguments": [
+        "--store",
+        "/var/lib/bijective/store",
+        "--readiness",
+        "/run/bijective/operational-host.json"
+      ],
+      "after": [
+        "control-engine"
+      ],
+      "memory_max_mb": 512,
+      "stop_timeout_seconds": 30,
+      "writes": [
+        "/var/lib/bijective/store",
+        "/run/bijective"
+      ]
+    },
+    {
+      "name": "strategy-engine",
+      "binary": "/opt/bijective/bin/bijective-strategy-engine",
+      "class": "operational",
+      "arguments": [
+        "--store",
+        "/var/lib/bijective/store",
+        "--readiness",
+        "/run/bijective/strategy-engine.json",
+        "--cgroup-root",
+        "${BIJECTIVE_CGROUP_ROOT}",
+        "--strategy",
+        "${BIJECTIVE_STRATEGY}",
+        "--market",
+        "${BIJECTIVE_MARKET}",
+        "--stage",
+        "${BIJECTIVE_STAGE}",
+        "--events-behind",
+        "1024"
+      ],
+      "after": [
+        "data-engine"
+      ],
+      "memory_max_mb": 1024,
+      "stop_timeout_seconds": 60,
+      "delegates_cgroup": true,
+      "writes": [
+        "/var/lib/bijective/store",
+        "/run/bijective"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "assurance",
+      "binary": "/opt/bijective/bin/bijective-verify-venue",
+      "arguments": [
+        "/var/lib/bijective/store",
+        "{instance}",
+        "/etc/bijective/profiles/{instance}.json",
+        "<instrument>",
+        "<endpoint>"
+      ],
+      "on_calendar": "daily",
+      "instances": [],
+      "stop_timeout_seconds": 60,
+      "writes": [
+        "/var/lib/bijective/store"
+      ]
+    }
+  ]
+}

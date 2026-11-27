@@ -1,0 +1,35 @@
+# Polymarket venue adapter.
+
+[package]
+name = "bijective-venue-polymarket"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_venue_polymarket"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-venue = { path = "../../venue" }
+bijective-common = { path = "../../common" }
+bijective-model = { path = "../../model" }
+bijective-lifecycle = { path = "../../lifecycle" }
+bijective-secrets-broker = { path = "../../secrets_broker" }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "macros", "sync"] }
+bijective-venue-socket = { path = "../socket" }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+futures-util = "0.3"
+# The feature sets match the closure attested for the other adapters; a wider set is unattested.
+k256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+sha3 = "0.10"
+hmac = "0.13"
+sha2 = "0.11"
+base64 = "0.22"
+reqwest = { version = "=0.13.4", default-features = false, features = ["rustls-no-provider", "http2"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }

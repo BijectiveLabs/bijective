@@ -1,0 +1,31 @@
+[package]
+name = "bijective-deployment"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_deployment"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-deploy"
+path = "src/bin/bijective-deploy.rs"
+
+[[bin]]
+name = "bijective-operational-host"
+path = "src/bin/bijective-operational-host.rs"
+
+[dependencies]
+bijective-common = { path = "../common" }
+bijective-event-store = { path = "../event_store" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+bijective-event-store = { path = "../event_store" }
+
+[lints.rust]
+unsafe_code = "forbid"

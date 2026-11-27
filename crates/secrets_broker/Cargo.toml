@@ -1,0 +1,26 @@
+# Secrets broker: the only path from a component to a credential.
+# First crate with third-party dependencies, because AEAD misuse is invisible to vectors.
+# Every package below is attested before it appears here.
+
+[package]
+name = "bijective-secrets-broker"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-secrets"
+path = "src/main.rs"
+
+[dependencies]
+chacha20poly1305 = "0.11"
+argon2 = "0.5.3"
+zeroize = { version = "1", features = ["derive"] }
+
+[lints.rust]
+unsafe_code = "forbid"

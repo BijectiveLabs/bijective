@@ -1,0 +1,18 @@
+# Access control: which role may take which operator action.
+# No dependencies: the decision is pure and must not differ between two runs.
+
+[package]
+name = "bijective-authority"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

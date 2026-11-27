@@ -1,0 +1,88 @@
+# Builds a release artefact and the node image on demand, verifies the artefact with the code an
+# operator's host runs, and keeps both as workflow artefacts. Nothing is published: publication
+# follows when the repository is public (decision on package names, 2026-11-22).
+
+name: Release
+
+# On demand once this file is on the default branch; until then, and whenever the release tooling
+# changes, on a push to dev.
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+    paths:
+      - .github/workflows/release.yml
+      - scripts/release/**
+      - Dockerfile
+
+permissions:
+  contents: read
+
+jobs:
+  artefact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # The pin is read from rust-toolchain.toml and validated as a bare version, as in CI.
+      - name: Read and validate the pinned toolchain
+        id: pin
+        run: |
+          set -euo pipefail
+          pinned=$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)
+          case "$pinned" in
+            *[!0-9.]* | "" | .* | *..* | *. )
+              echo "Rejected toolchain '$pinned': not a bare version." >&2
+              exit 1 ;;
+          esac
+          echo "rust=$pinned" >> "$GITHUB_OUTPUT"
+
+      - name: Install the pinned Rust toolchain
+        env:
+          PINNED_RUST: ${{ steps.pin.outputs.rust }}
+        run: |
+          set -euo pipefail
+          rustup toolchain install "$PINNED_RUST" --profile minimal
+          rustup default "$PINNED_RUST"
+
+      - name: Build the release programs
+        run: cargo build --release --locked --workspace --bins
+
+      - name: Assemble, record and verify the artefact
+        id: assemble
+        run: |
+          set -euo pipefail
+          version=$(python3 -c "import json; print(json.load(open('crates/deployment/deployment.json'))['platform_version'])")
+          name="bijective-${version}-linux-x86_64"
+          bash scripts/release/assemble.sh release "dist/${name}"
+          target/release/bijective-deploy verify-artefact "dist/${name}"
+          tar -C dist -czf "dist/${name}.tar.gz" "${name}"
+          (cd dist && sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256")
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.assemble.outputs.name }}
+          path: |
+            dist/${{ steps.assemble.outputs.name }}.tar.gz
+            dist/${{ steps.assemble.outputs.name }}.tar.gz.sha256
+
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the node image
+        run: docker build --tag bijective:candidate .
+
+      - name: Save the image
+        run: docker save bijective:candidate | gzip > bijective-image.tar.gz
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: bijective-image
+          path: bijective-image.tar.gz

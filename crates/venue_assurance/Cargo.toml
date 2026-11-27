@@ -1,0 +1,35 @@
+# V5 - the behaviour verifier.
+# Optional: off means verification stops, never connectivity. The profile crate does not depend on this.
+
+[package]
+name = "bijective-venue-assurance"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-verify-venue"
+path = "src/bin/verify_venue.rs"
+
+[[bin]]
+name = "bijective-profile"
+path = "src/bin/profile.rs"
+
+[dependencies]
+bijective-serialization = { path = "../serialization" }
+bijective-event-store = { path = "../event_store" }
+# The one place above the contract that may name a venue; the verifier itself reaches nothing.
+bijective-venue-registry = { path = "../adapters/registry" }
+bijective-common = { path = "../common" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+bijective-venue = { path = "../venue" }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[dev-dependencies]

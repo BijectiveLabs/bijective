@@ -1,0 +1,33 @@
+# The operator's command line. Operational: it consumes the platform and nothing consumes it.
+
+[package]
+name = "bijective-cli"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_cli"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bijective"
+path = "src/main.rs"
+
+[dependencies]
+bijective-authority = { path = "../authority" }
+bijective-identity = { path = "../identity" }
+bijective-model = { path = "../model" }
+bijective-serialization = { path = "../serialization" }
+bijective-event-store = { path = "../event_store" }
+
+[dev-dependencies]
+bijective-common = { path = "../common" }
+bijective-control-engine = { path = "../control_engine" }
+bijective-limits = { path = "../limits" }
+tokio = { version = "1", features = ["macros", "rt"] }
+
+[lints.rust]
+unsafe_code = "forbid"

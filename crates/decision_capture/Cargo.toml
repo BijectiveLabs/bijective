@@ -1,0 +1,19 @@
+# C1 decision-capture core.
+# Bounded top-of-book buffer and point-in-time stamping. Zero dependencies.
+
+[package]
+name = "bijective-decision-capture"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+# A plain library, no cdylib: the engines that use it build from the same workspace.
+crate-type = ["rlib"]
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

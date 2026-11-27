@@ -1,0 +1,132 @@
+# Public functions with no production reader, and why each is allowed to have none.
+#
+# Format: <name> <TAB> <path relative to the repository root> <TAB> <reason>
+#
+# A public function nothing calls is either a capability the platform declared and forgot to use,
+# or a forward declaration whose consumer is not built. The first kind has cost this platform
+# real defects - a refused cancel routed away from reconciliation, a venue curated for market
+# data able to receive orders, a hard rule bypassed by the file it was meant to guard. The
+# second kind is legitimate and must still be named, because the two look identical from here.
+#
+# An entry whose function now has a reader, or no longer exists, is stale and fails this gate.
+# The list is meant to shrink.
+ALL	crates/limits/src/scope.rs	every scope level in order; the walk that needs all five belongs to the registry, unreachable for the same reason as `load`
+Acted.placement	crates/control_engine/src/loop_.rs	what came of each proposal in a pass; read by tests and by no production caller - the operator surface that would report it is the console
+AuditFinding.position	crates/strategy_engine/src/runs/mod.rs	research integrity audit records; the reporting surface that reads them is not built
+AuditFinding.stream	crates/strategy_engine/src/runs/mod.rs	as AuditFinding.position
+Clearance.seal	crates/model/src/lib.rs	deliberately never read - a private zero-sized field whose only job is to make a struct literal outside this crate impossible, so a clearance cannot be forged by construction
+ConnectError::NoCredential	crates/venue/src/contract/mod.rs	nothing constructs it: a credential is resolved before it reaches this contract - ExecutionSetup carries one - so no code at or below this level can observe its absence. It becomes producible when a venue is opened through the broker rather than handed a resolved credential
+Continuity::Gap	crates/venue/src/contract/connection.rs	the first venue detects a sequence gap and drops its books rather than measuring the extent, so it reports GapOfUnknownExtent. A venue that numbers what it sends could fill this.
+DecisionRecord.decided_at	crates/decision_capture/src/lib.rs	execution quality attribution's benchmark instant; the attribution calculator that would read it is on the Python substrate and does not consume this record yet
+Declared.at_ns	crates/evaluation/src/evidence/registry.rs	when a claim was written, for an operator reading the stream - is why it is not the *before*; the surface that would show it is the console
+DeclaredSource::TpmSeal	crates/secrets_broker/src/source.rs	nothing constructs it: names the key sources and the sealed-hardware backend is not built. Producible when it is
+Divergence.match_kind	crates/reconciliation/src/classify.rs	reconciliation classifies and the consumer of the classification - the operator surface - is not built
+Divergence::DecidedDifferently.decided	crates/paper_compare/src/lib.rs	the two decisions that differ, so a reader sees both without fetching either stream again
+Divergence::Minimums.declared_notional	crates/venue_assurance/src/lib.rs	as `Divergence::Minimums.declared_size`
+Divergence::Minimums.declared_size	crates/venue_assurance/src/lib.rs	venue assurance's evidence that a venue's declared minimum and its observed one disagree; the quirk base that would consume it is venue assurance and unbuilt
+Divergence::Minimums.observed_notional	crates/venue_assurance/src/lib.rs	as `Divergence::Minimums.declared_size`
+Divergence::Minimums.observed_size	crates/venue_assurance/src/lib.rs	as `Divergence::Minimums.declared_size`
+Divergence::OnlyOneAnswered.answered_by	crates/paper_compare/src/lib.rs	which run reached a proposal the other did not; a run that stopped early and one that stopped late are different findings
+DivergenceClass::Value.theirs	crates/reconciliation/src/classify.rs	the venue's figure beside ours, so a divergence can be read without a second lookup; the operator surface is the console
+Entry.link	crates/event_store/src/format.rs	the chain is verified during the scan against a local recomputation, not through this field; the field carries the verified value outward for a reader that does not yet exist
+Fidelity::VenueIdentifier	crates/reconciliation/src/record.rs	nothing constructs it: no profile declares this fidelity, and the variant is read from a profile rather than decided here
+Inbound::Book.venue_sequence	crates/strategy_engine/src/protocol/mod.rs	what a venue numbered an update, absent where it does not number; read by a strategy rather than by the platform, so nothing here consumes it by design
+Instant.resolution	crates/decision_capture/src/lib.rs	how fine the instant is, so a finding can state its own precision; the leakage check that would read it is not built
+NoticesError::AttestationUnreadable	crates/deployment/src/notices.rs	nothing constructs it: the caller reads the attestation file and reports its own error, so this vocabulary is never reached for that case
+Observation.subject	crates/strategy_engine/src/runs/mod.rs	research integrity run records; the reporting surface that reads them is not built
+OpenDivergence.severity	crates/reconciliation/src/signal.rs	as match_kind
+Outcome::WrongRun.registered	crates/evaluation/src/evidence/preregistration.rs	the identity a claim was registered against, carried so a mismatch can be read without fetching the registration; the reader is the same unbuilt surface
+ProvenanceRecord.state_driven	crates/limits/src/provenance.rs	audit reporting audit record; the reader that renders a justification is not built
+Recovery::Incomplete	crates/event_store/src/projection/mod.rs	produced by #[default], which this sweep cannot see - the macro blind spot names. It is the state every projection starts in
+Refusal.behind_by	crates/common/src/bus/delivery.rs	 delivery reporting; the consumer is missing-event detection, not yet built
+Refusal.subscription	crates/common/src/bus/delivery.rs	as behind_by
+Resolution::Microsecond	crates/decision_capture/src/lib.rs	every timestamp reaching capture today is nanoseconds; the second venue times some of its own history in seconds (docs/integrations/hyperliquid.md), which is what these are for
+Resolution::Second	crates/decision_capture/src/lib.rs	as Microsecond
+SubscribeError::NotConnected	crates/venue/src/contract/subscription.rs	nothing constructs it: neither adapter refuses a subscribe made while disconnected, so the transport's own failure arrives instead
+Subscription.attached_at_ns	crates/common/src/bus/mod.rs	as behind_by
+Verdict.unregistered	crates/evaluation/src/evidence/preregistration.rs	research integrity; figures the registration never named, read by whatever reports a verdict to an operator - the console's surface, not built
+Verdict::Clean.sealed_len	crates/event_store/src/format.rs	the segment's true end, for a recovery that must distinguish a torn tail from a short segment; read by the drill and by no production caller
+VerificationStamp.verifier_version	crates/venue/src/profile/declaration.rs	venue assurance's verifier is not built, so nothing stamps a version and nothing reads one
+Withdrawal.unresolved	crates/control_engine/src/path/decision.rs	the operator command that would act on it needs a live-order registry
+admits	crates/risk/src/desks/mod.rs	a mandate's own admission test; the desk selector that would consult it is not built
+admits_entity	crates/risk/src/desks/mod.rs	desk admission desk routing; the consumer is the desk selector, not yet built
+agreed	crates/paper_compare/src/lib.rs	whether two runs behaved alike, read by whatever presents the comparison; the same unbuilt surface
+amend	crates/adapters/bybit/src/rest.rs	the venue's amend endpoint, complete and unreachable - the contract has no amend, and records why one stays unbuilt while the second venue implements it as cancel-and-replace
+check_execution	crates/venue/src/contract/conformance.rs	the execution half of the conformance suite; run by an operator against a live venue, not by the platform
+compare	crates/strategy_engine/src/lib.rs	research integrity reproduction: two supervised runs compared for determinism. Runs alongside `supervise`, whose driver is not built.
+compare	crates/paper_compare/src/lib.rs	as `decisions`
+concatenated	crates/deployment/src/units.rs	the deployment kit - one text so a unit set has a single digest; nothing digests the unit set yet
+continuity_after_loss	crates/adapters/bybit/src/book.rs	nothing calls MarketFeed::reconnect yet; see is_unbroken
+decisions	crates/paper_compare/src/lib.rs	the promotion paper-to-live comparison; the caller is the operator surface that would show it or the fast path's own tooling, neither built
+drive	crates/determinism/src/lib.rs	the determinism harness's own driver, exercised by the seeded proofs that are its purpose
+enabled_at_install	crates/deployment/src/manifest.rs	the deployment kit install-time policy; read by the installer, which is a script rather than a caller
+extent_is_known	crates/venue/src/contract/connection.rs	see is_unbroken
+flush	crates/limits/src/provenance.rs	audit reporting - flushes provenance records to a sink; the evidence exporter that would drain it is not built
+from_envelope	crates/serialization/src/codec/writer.rs	re-encoding a decoded envelope; used by the projection rebuild path once audit reporting exports exist
+implies_payment	crates/venue/src/profile/funding.rs	venue assurance funding; the consumer is execution quality attribution's funding leg, not yet built
+is_crossed	crates/adapters/bybit/src/book.rs	a crossed book is an anomaly missing-event detection should raise; the detector does not yet subscribe to book state
+is_derived	crates/venue/src/profile/funding.rs	as implies_payment
+is_ready	crates/strategy_engine/src/lib.rs	supervisor readiness; runs alongside `supervise`, whose driver is not built
+is_unbroken	crates/venue/src/contract/connection.rs	MarketFeed::reconnect is caller-driven and no engine drives it; the Bybit session self-heals at the socket, so the gap is latent. It stops being latent at the second venue, where one subscription can go silent while the socket stays healthy (docs/integrations/hyperliquid.md). Named in.
+is_up	crates/control_engine/src/lib.rs	the console readiness; the consumer is the operator surface, not yet built
+may_promote	crates/evaluation/src/evidence/mod.rs	as `stand`; read by the supervisor when a promotion path exists
+may_resubmit_idempotently	crates/venue/src/normalise/outcome.rs	the order path does not retry; a retry path is named in and not yet built
+names	crates/risk/src/desks/mod.rs	the desk roster for an operator listing; the surface that would list them is the console, not built
+on_snapshot	crates/limits/src/pre_trade.rs	the pre-trade check's inbound edge for the same missing feed; no component instantiates a PreTradeCheck
+reached_anyone	crates/common/src/bus/delivery.rs	 delivery reporting; the consumer is missing-event detection, not yet built
+single_book	crates/risk/src/desks/mod.rs	as admits_entity
+stand	crates/evaluation/src/evidence/mod.rs	research integrity together; the promotion gate that would ask it is the promotion stages path, which has no design
+subscribers	crates/common/src/bus/mod.rs	as reached_anyone
+supports_natively	crates/venue/src/profile/declaration.rs	OrderRequest carries no order type - market is an absent price - so there is nothing to ask about yet. Becomes live when the order model gains one.
+unallocated	crates/risk/src/desks/mod.rs	as admits_entity
+unverified_as_of	crates/venue_assurance/src/lib.rs	as raises_condition
+witness_breach	crates/limits/src/limit.rs	a constructive proof that a declared limit can fire at all, exercised by the tests that prove it - the reachability argument is the point, not a production call
+Inbound::Resumed.from_position	crates/strategy_engine/src/protocol/mod.rs	written for the strategy to read; the supervisor states where a session resumes and never reads it back
+Inbound::Resumed.missed	crates/strategy_engine/src/protocol/mod.rs	the same line's other half: the gap is a fact for the strategy, and the supervisor's own copy is the projection it came from
+AuditFinding.detail	crates/strategy_engine/src/runs/mod.rs	an auditor's artefact; research integrity fixes the class and nothing consumes its findings yet
+Observation.detail	crates/strategy_engine/src/runs/mod.rs	an observer's artefact, for the same reason as AuditFinding.detail
+CorruptReason::PayloadLengthOutOfRange.found	crates/event_store/src/format.rs	carried so a quarantine names the figure it saw; read by an operator through Debug, which no sweep counts
+CorruptReason::SequenceBreak.expected	crates/event_store/src/format.rs	the same: what a torn segment claimed against what it should have, reported rather than branched on
+CorruptReason::SequenceBreak.found	crates/event_store/src/format.rs	the other half of that comparison, and it is the pair that makes the message worth reading
+UnreadableReason::UnknownFormatVersion.found	crates/event_store/src/format.rs	names the version a segment declared, so an operator meeting a future store is told which build wrote it
+Inbound::Book.position	crates/strategy_engine/src/protocol/mod.rs	written for the strategy to read: it names the event back in a proposal, and the supervisor checks that rather than reading this field itself
+places_decisions	crates/strategy_engine/src/runs/mod.rs	the exchange's own answer to whether a decision position is a fact; the supervisor passes the same distinction to the reader as a bound, and this is what a later caller asks
+Fidelity::Undeclared	crates/reconciliation/src/record.rs	the answer for a venue whose profile declares no pairing key; produced once fidelity is read from the venue profile, which is not built - callers pass a fidelity explicitly
+DivergenceClass::Value.ours	crates/reconciliation/src/classify.rs	our figure beside the venue's, carried so a divergence names both; rendered through Debug and read by no caller
+Outcome::WrongRun.ran	crates/evaluation/src/evidence/preregistration.rs	the run that was measured, beside the run the claim was registered for; the promotion step refuses on the variant and does not read the figure
+check_feed	crates/venue/src/contract/conformance.rs	the record conformance check over recorded frames; run by each adapter's replay tests. The shipped caller is venue assurance replaying a fresh capture, which is not built
+has_applied	crates/lifecycle/src/position.rs	whether an identity was applied, for the reader that resumes a fill stream after a restart; the producer is the venue execution stream (private order and fill topics), the next stage; until then the fill path is exercised by the lifecycle's own tests
+PositionChange.cause	crates/lifecycle/src/position.rs	the position_updated audit record; written to a stream once fills have a producer
+PositionChange.quantity_after_scaled	crates/lifecycle/src/position.rs	as PositionChange.cause
+PositionChange.quantity_before_scaled	crates/lifecycle/src/position.rs	as PositionChange.cause
+Transition.cause	crates/lifecycle/src/order.rs	the order audit record; the control engine folds its stream into the lifecycle and does not yet write transitions to a stream of their own
+Transition.from	crates/lifecycle/src/order.rs	as Transition.cause
+Transition.to	crates/lifecycle/src/order.rs	as Transition.cause
+VenueEvidence.history_from_ns	crates/lifecycle/src/report.rs	the declared lower bound of the history read, for the finding that bounded history cannot prove realized profit; the producer is the venue execution adapter that turns its order, fill and position answers into VenueEvidence, the next stage
+on_record	crates/adapters/simulated/src/engine.rs	the simulated venue's driving surface; its consumers are the control engine's paper mode and the bounded backtest, wired once fills are recorded on the control stream. Exercised by the recorded-traffic parity test
+record_fill	crates/control_engine/src/path/fills.rs	the only writer of fills to the control stream; its callers are startup reconciliation and the venue private execution stream, the next two stages. Exercised by the control engine's fill tests
+CircuitState::Open.until_ns	crates/venue/src/resilience/breaker.rs	the instant an open breaker next lets a probe through, carried in the state so a caller can show it; the gate reports the refusal's own retry_at_ns and nothing reads this field
+with_connect_timeout	crates/adapters/bybit/src/transport.rs	a configuration seam set by the test that shortens the handshake bound; production uses the default, which is the session connect deadline
+with_connect_timeout	crates/adapters/hyperliquid/src/transport.rs	as the Bybit seam: set by the test that shortens the handshake bound; production uses the 10-second default
+Inbound::Venue.fee_source	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Venue.maker_fee_bps_scaled	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Venue.taker_fee_bps_scaled	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Order.fill_price_scaled	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Order.fill_quantity_scaled	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Order.recorded_at_ns	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::Funding.next_funding_ns	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::Funding.rate_scale	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::Funding.rate_scaled	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::LongShortRatio.long_share_scale	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::LongShortRatio.long_share_scaled	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::LongShortRatio.short_share_scale	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::LongShortRatio.short_share_scaled	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::OpenInterest.base_quantity_scaled	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::OpenInterest.quote_value_scale	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+FactValues::OpenInterest.quote_value_scaled	crates/strategy_engine/src/protocol/fact.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Fact.exchange_ts_ns	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Fact.fact_position	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+Inbound::Resumed.stream	crates/strategy_engine/src/protocol/mod.rs	sent to the strategy and read by it, on the far side of the protocol; nothing in Rust reads a field it serialises
+VenueEvent::TickSize.tick_scaled	crates/adapters/polymarket/src/message.rs	parsed and tested; recorded once decision 0002's resolution and tick handling is built
+encode	crates/console/src/detection.rs	the open detections format's writer, for detectors outside the open core
+encode	crates/console/src/performance.rs	the open performance format's writer, for analytics outside the open core

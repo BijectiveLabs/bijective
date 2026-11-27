@@ -1,0 +1,20 @@
+# Reconciliation.
+#
+# Read-only against both sides: a reconciliation that self-heals has stopped reporting.
+
+[package]
+name = "bijective-reconciliation"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-model = { path = "../model" }
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,30 @@
+# The research archive: market records as Parquet with zstd, sealed, hashed and compacted.
+# The data engine writes it; nothing on the order path reads it.
+
+[package]
+name = "bijective-archive"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_archive"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-archive"
+path = "src/main.rs"
+
+[dependencies]
+bijective-model = { path = "../model" }
+bijective-common = { path = "../common" }
+# Column API only: the default feature set brings the arrow closure, which no reader here needs.
+parquet = { version = "=60.1.0", default-features = false, features = ["zstd"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.11"
+
+[lints.rust]
+unsafe_code = "forbid"

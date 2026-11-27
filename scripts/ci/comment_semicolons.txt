@@ -1,0 +1,3 @@
+# Comment lines that hold a semicolon, counted by the Comment punctuation gate. Lower it when a
+# change removes some, never raise it.
+1

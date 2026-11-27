@@ -1,0 +1,3 @@
+# Attributions this platform sends with orders. One line each: venue, what is sent, who earns,
+# and the document that discloses it. Empty means none, which is the state today. An attribution
+# is off unless the operator turns it on (docs/concepts/commercial_attribution.md).

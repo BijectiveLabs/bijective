@@ -1,0 +1,20 @@
+# Who an operator command came from: signing keys, a registry of operators, and verification.
+# Separate from `authority`, which decides what a role may do and has no dependencies.
+
+[package]
+name = "bijective-identity"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-authority = { path = "../authority" }
+ring = "0.17"
+
+[lints.rust]
+unsafe_code = "forbid"

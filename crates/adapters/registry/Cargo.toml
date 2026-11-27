@@ -1,0 +1,29 @@
+# Venue registry: the one place above an adapter where a venue name appears in
+# wiring, so a new venue is a registration here and not an engine edit.
+
+[package]
+name = "bijective-venue-registry"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-secrets-broker = { path = "../../secrets_broker" }
+bijective-common = { path = "../../common" }
+bijective-venue = { path = "../../venue" }
+bijective-venue-alpaca = { path = "../alpaca" }
+bijective-venue-bybit = { path = "../bybit" }
+bijective-venue-hyperliquid = { path = "../hyperliquid" }
+bijective-venue-polymarket = { path = "../polymarket" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] }
+
+[dev-dependencies]
+bijective-model = { path = "../../model" }
+
+[lints.rust]
+unsafe_code = "forbid"

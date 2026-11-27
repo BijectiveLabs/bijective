@@ -1,0 +1,23 @@
+[package]
+name = "bijective-risk"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_risk"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-limits = { path = "../limits" }
+bijective-serialization = { path = "../serialization" }
+bijective-event-store = { path = "../event_store" }
+bijective-model = { path = "../model" }
+bijective-venue = { path = "../venue" }
+
+[dev-dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,42 @@
+# The Control Engine. Own process: its fault is a halt and nothing else's may be.
+
+[package]
+name = "bijective-control-engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_control_engine"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-control-engine"
+path = "src/bin/bijective-control-engine/main.rs"
+
+[dependencies]
+bijective-limits = { path = "../limits" }
+bijective-model = { path = "../model" }
+bijective-common = { path = "../common" }
+bijective-risk = { path = "../risk" }
+bijective-serialization = { path = "../serialization" }
+bijective-event-store = { path = "../event_store" }
+bijective-authority = { path = "../authority" }
+bijective-identity = { path = "../identity" }
+bijective-decision-capture = { path = "../decision_capture" }
+bijective-lifecycle = { path = "../lifecycle" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Executor for the venue-call futures.
+tokio = { version = "1", features = ["rt", "macros", "time", "signal"] }
+bijective-venue = { path = "../venue" }
+bijective-venue-registry = { path = "../adapters/registry" }
+bijective-venue-simulated = { path = "../adapters/simulated" }
+bijective-secrets-broker = { path = "../secrets_broker" }
+
+[dev-dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

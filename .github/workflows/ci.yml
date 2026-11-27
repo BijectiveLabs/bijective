@@ -1,0 +1,91 @@
+# Runs the change gates on every push and pull request to the protected branches.
+#
+# The gate runner decides pass or fail. This workflow only provides the pinned toolchain and the
+# Python packages under test, so a failure means a defect rather than a missing tool.
+
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # The strategy sandbox enters a network namespace as an unprivileged user. Ubuntu runners
+      # restrict that through AppArmor by default, which would fail the sandbox tests for a reason
+      # that is the runner's, not the code's.
+      - name: Allow unprivileged user namespaces
+        run: |
+          if sysctl -n kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+
+      # The pin is read from rust-toolchain.toml, which a pull request controls, so it is validated
+      # as a bare version before it reaches a command line.
+      - name: Read and validate the pinned toolchain
+        id: pin
+        run: |
+          set -euo pipefail
+          pinned=$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)
+          case "$pinned" in
+            *[!0-9.]* | "" | .* | *..* | *. )
+              echo "Rejected toolchain '$pinned': not a bare version." >&2
+              exit 1 ;;
+          esac
+          echo "rust=$pinned" >> "$GITHUB_OUTPUT"
+
+      - name: Install the pinned Rust toolchain
+        env:
+          PINNED_RUST: ${{ steps.pin.outputs.rust }}
+        run: |
+          set -euo pipefail
+          rustup toolchain install "$PINNED_RUST" --profile minimal --component clippy --component rustfmt
+          rustup default "$PINNED_RUST"
+          rustc --version
+
+      # The gates build with --offline, so the locked dependency set is fetched once here.
+      - name: Fetch Rust dependencies
+        run: cargo fetch --locked
+
+      # Packages are installed, not only pytest: the src/ layout means tests cannot import a
+      # package from the working directory.
+      - name: Install the Python packages under test
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --upgrade pip
+          for pkg in python/*/; do
+            python3 -m pip install --quiet -e "${pkg}[test]"
+          done
+
+      - name: Run the change gates
+        run: bash scripts/ci/run_gates.sh
+
+      # The strategy set and feedback drills bound real runs in cgroup v2 and needs a subtree delegated to this
+      # user, which a hosted runner does not give. One is made here as root and this shell moved
+      # into a leaf of it, so the drill runs on every change instead of only by hand. The guided
+      # path drill also needs a systemd user session and still runs by hand.
+      - name: Run the strategy set and feedback drills in a delegated cgroup
+        run: |
+          set -euo pipefail
+          root=/sys/fs/cgroup/bijective-ci
+          sudo mkdir -p "$root/shell"
+          echo "+memory +pids" | sudo tee /sys/fs/cgroup/cgroup.subtree_control >/dev/null
+          echo "+memory +pids" | sudo tee "$root/cgroup.subtree_control" >/dev/null
+          sudo chown -R "$(id -u):$(id -g)" "$root"
+          echo $$ | sudo tee "$root/shell/cgroup.procs" >/dev/null
+          export BIJECTIVE_CGROUP_ROOT="$root"
+          bash scripts/verify/strategy_set.sh
+          bash scripts/verify/feedback_path.sh
+          bash scripts/verify/paper_path.sh

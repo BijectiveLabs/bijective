@@ -1,0 +1,11 @@
+target/
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Local credential files. The platform reads a credential only from its sealed keystore
+# (docs/how_to/load_a_venue_credential.md); a file like this must never be committed.
+.env*
+!.env.example

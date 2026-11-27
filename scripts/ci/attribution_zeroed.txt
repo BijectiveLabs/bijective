@@ -1,0 +1,4 @@
+# Attribution fields a venue requires in a signed order, which the adapter always sends empty.
+# One line each: the adapter source file, the field, and why. The gate accepts a match on such a
+# line only where the same line writes the zero value (ZERO_WORD); any other value fails it.
+crates/adapters/polymarket/src/order.rs builder required by the venue's signed order and always the zero word (decision 0002, rule 8)

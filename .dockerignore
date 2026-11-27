@@ -1,0 +1,11 @@
+target/
+.git/
+graphify-out/
+CLAUDE.md
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+# Local credential files and tool state stay out of the build context: COPY . . would put them in a layer.
+.env*
+.serena/

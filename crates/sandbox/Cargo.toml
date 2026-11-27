@@ -1,0 +1,19 @@
+# Agent sandbox: mechanism, research integrity.
+# No unsafe and no libc binding: namespaces via unshare(1), limits via plain writes under /sys/fs/cgroup.
+# A syscall wrapper would put unsafe code on the path operator code runs behind.
+
+[package]
+name = "bijective-sandbox"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

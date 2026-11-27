@@ -1,0 +1,18 @@
+# The platform's own objects.
+# Owned by everything and no engine, so it sits in the core.
+
+[package]
+name = "bijective-model"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"

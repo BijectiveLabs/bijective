@@ -1,0 +1,47 @@
+# Component directory and its architectural area.
+#
+# core         shared foundations every program links: model, clock, bus, store, codec
+# adapters     the venue contract and one crate per venue
+# data         market-data capture
+# control      risk evaluation, limits and the order path
+# strategy     strategy hosting, sandbox, evaluation and promotion
+# operational  read-side and operator tooling; consumes the platform, consumed by nothing
+# pro          Bijective Pro components (CLAUDE.md 2.13): may reach the open core, never reached by it
+#
+# An engine (data, control, strategy) may depend on core, adapters and its own area only.
+crates/authority core
+crates/identity core
+crates/cli operational
+crates/common core
+crates/decision_capture core
+crates/determinism core
+crates/serialization core
+crates/event_store core
+crates/model core
+crates/lifecycle core
+crates/secrets_broker core
+crates/venue adapters
+crates/adapters/registry adapters
+crates/adapters/alpaca adapters
+crates/adapters/bybit adapters
+crates/adapters/hyperliquid adapters
+crates/adapters/polymarket adapters
+crates/adapters/simulated adapters
+crates/adapters/socket adapters
+crates/data_engine data
+crates/archive data
+crates/control_engine control
+crates/risk control
+crates/limits control
+crates/evaluation strategy
+crates/strategy_engine strategy
+crates/sandbox strategy
+crates/console operational
+crates/deployment operational
+crates/ordering operational
+crates/reconciliation operational
+crates/paper_compare operational
+crates/venue_assurance operational
+python/bijective-attribution operational
+python/bijective-detection operational
+python/bijective-strategy strategy

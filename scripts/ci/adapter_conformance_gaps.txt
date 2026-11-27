@@ -1,0 +1,8 @@
+# Adapter conformance runs an adapter does not have yet, and why.
+#
+# Format: <adapter crate directory> <TAB> <check function> <TAB> <reason>
+#
+# An adapter that implements MarketFeed runs check_feed over a recording in its own tests; one that
+# implements VenueExecution runs check_execution. A run that is missing must be listed here with a
+# reason. An entry whose run now exists is stale and fails the gate, so this list can only shrink.
+#

@@ -1,0 +1,46 @@
+# The platform workspace: one manifest and one lock, so a shared dependency resolves to one version.
+# Members are listed, not globbed: a crate joining the platform is a decision, not whatever is on disk.
+
+[workspace]
+resolver = "3"
+members = [
+    "crates/adapters/alpaca",
+    "crates/adapters/bybit",
+    "crates/adapters/hyperliquid",
+    "crates/adapters/polymarket",
+    "crates/adapters/registry",
+    "crates/adapters/simulated",
+    "crates/adapters/socket",
+    "crates/archive",
+    "crates/authority",
+    "crates/cli",
+    "crates/common",
+    "crates/console",
+    "crates/control_engine",
+    "crates/data_engine",
+    "crates/decision_capture",
+    "crates/deployment",
+    "crates/determinism",
+    "crates/evaluation",
+    "crates/event_store",
+    "crates/identity",
+    "crates/lifecycle",
+    "crates/limits",
+    "crates/model",
+    "crates/ordering",
+    "crates/paper_compare",
+    "crates/reconciliation",
+    "crates/risk",
+    "crates/sandbox",
+    "crates/secrets_broker",
+    "crates/serialization",
+    "crates/strategy_engine",
+    "crates/venue",
+    "crates/venue_assurance",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license = "Apache-2.0"

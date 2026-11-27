@@ -1,0 +1,38 @@
+[package]
+name = "bijective-strategy-engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_strategy_engine"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "bijective-strategy-engine"
+path = "src/bin/bijective-strategy-engine/main.rs"
+
+[[bin]]
+name = "bijective-backtest"
+path = "src/bin/bijective-backtest/main.rs"
+
+[[bin]]
+name = "bijective-paper"
+path = "src/bin/bijective-paper.rs"
+
+[dependencies]
+bijective-model = { path = "../model" }
+bijective-serialization = { path = "../serialization" }
+serde_json = "1"
+bijective-sandbox = { path = "../sandbox" }
+bijective-common = { path = "../common" }
+bijective-event-store = { path = "../event_store" }
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+bijective-sandbox = { path = "../sandbox" }
+
+[lints.rust]
+unsafe_code = "forbid"

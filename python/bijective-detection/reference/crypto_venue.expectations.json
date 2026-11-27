@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "_about": [
+    "Reference expectation registry for a crypto venue integration.",
+    "",
+    "This is a starting point a Client owns and edits, not a fixed policy. It is plain",
+    "versioned JSON so it can be read, changed and consumed with no Bijective component",
+    "present.",
+    "",
+    "Every entry states the incident or measurement it came from. That requirement is",
+    "enforced by the loader, and it exists because an interval with no stated reason cannot",
+    "be judged later: whether relaxing it is safe cannot be decided without knowing what it",
+    "protects against.",
+    "",
+    "Entries below are derived from recorded production operation of a crypto venue",
+    "integration. Intervals taken from a running watchdog configuration are marked as",
+    "measured; intervals derived from an incident state the derivation."
+  ],
+  "expectations": [
+    {
+      "integration": "platform.cache",
+      "must_produce_within_ns": 10000000000,
+      "acknowledgement_required": false,
+      "severity": "critical",
+      "origin": "Measured from a running watchdog configuration: the hot cache was health-checked every 10s with a 3-failure circuit breaker. Critical because hot state feeds the risk path, and a cache that stops answering does not error - it returns nothing, which reads downstream as a value of zero."
+    },
+    {
+      "integration": "platform.timeseries_store",
+      "must_produce_within_ns": 30000000000,
+      "acknowledgement_required": false,
+      "severity": "warning",
+      "origin": "Measured from a running watchdog configuration: 30s interval, 3-failure circuit breaker. Warning rather than critical because the store is off the order path; losing it degrades history and reporting, not trading."
+    },
+    {
+      "integration": "venue.market_data.book",
+      "must_produce_within_ns": 15000000000,
+      "acknowledgement_required": true,
+      "severity": "critical",
+      "origin": "Measured from a running watchdog configuration: the venue feed was checked every 15s with a 5-failure breaker. Acknowledgement is required because of the subscription incident recorded against venue.subscription below."
+    },
+    {
+      "integration": "platform.signal_pipeline",
+      "must_produce_within_ns": 60000000000,
+      "acknowledgement_required": false,
+      "severity": "warning",
+      "origin": "Measured from a running watchdog configuration: 60s interval, 3-failure breaker. A pipeline that stops producing proposals is not itself a loss event, but it is the first sign that an upstream feed died quietly."
+    },
+    {
+      "integration": "platform.risk_pipeline",
+      "must_produce_within_ns": 60000000000,
+      "acknowledgement_required": false,
+      "severity": "critical",
+      "origin": "Measured from a running watchdog configuration: 60s interval, 3-failure breaker. Critical for a reason the others are not - a risk pipeline that stops evaluating leaves the platform trading with nothing checking it, and that state reports as healthy from every other angle."
+    },
+    {
+      "integration": "venue.subscription",
+      "must_produce_within_ns": 5000000000,
+      "acknowledgement_required": true,
+      "severity": "critical",
+      "origin": "Incident 2026-07-16: a subscribe response was swallowed rather than logged, so a topic that the venue had deprecated failed to attach and went unrecorded for more than nine days. The venue returned 'handler not found' and nothing surfaced it. This is the founding case for the whole domain: no error was raised, no dashboard changed, and the data simply was not there. Five seconds is the bound on waiting for a confirmation, not on data flow."
+    },
+    {
+      "integration": "venue.market_data.mark_price",
+      "must_produce_within_ns": 5000000000,
+      "acknowledgement_required": true,
+      "severity": "critical",
+      "origin": "Incident: hot state was gated on a field the venue only sends when it changes, so the key expired after its 10s time-to-live, the downstream reader saw a mark price of 0.0, and every order proposal was rejected for a missing price. The interval is deliberately tighter than the 10s expiry that caused it - an expectation equal to the time-to-live would fire only after the damage. The general rule this encodes: a field that arrives only on change must never gate the freshness of one that arrives always."
+    },
+    {
+      "integration": "venue.market_data.liquidation",
+      "must_produce_within_ns": 3600000000000,
+      "acknowledgement_required": true,
+      "severity": "warning",
+      "origin": "Incident 2026-07-16: the venue deprecated the per-symbol liquidation topic in favour of an aggregate topic with a different payload shape, and the old subscription simply stopped attaching. An hour is not a health bound - liquidations are genuinely sparse - it is a deprecation bound: a stream that produces nothing for an hour is more likely to have been renamed than to be quiet. Acknowledgement is what actually catches this, and the interval is the backstop."
+    },
+    {
+      "integration": "venue.funding.settlement",
+      "must_produce_within_ns": 28800000000000,
+      "acknowledgement_required": false,
+      "severity": "critical",
+      "origin": "Derived from venue mechanics rather than from an incident: funding settles on a fixed schedule per venue, commonly every eight hours. Critical despite the long interval, which is why severity is declared and never inferred from the interval - a missed settlement is a real cost carried silently, not a delayed message. Adjust the interval to the venue's own funding model; where a venue funds continuously there is no interval and this entry does not apply."
+    }
+  ]
+}

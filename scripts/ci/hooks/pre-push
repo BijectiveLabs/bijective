@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Runs the change gates before a push leaves the machine. Convenience only: the authority is
+# .github/workflows/change-gates.yml on a clean checkout, and `git push --no-verify` stays supported.
+# Install:  bash scripts/ci/hooks/install.sh
+
+set -uo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+gates="${repo_root}/scripts/ci/run_gates.sh"
+
+if [ ! -f "$gates" ]; then
+    echo "pre-push: gate script not found at ${gates}" >&2
+    echo "pre-push: refusing to pass a check it could not run." >&2
+    exit 1
+fi
+
+echo "pre-push: running change gates..."
+if bash "$gates"; then
+    exit 0
+fi
+
+cat >&2 <<'MSG'
+
+pre-push: a gate failed or could not be run, so the push is stopped.
+
+Fix it, or push with --no-verify if you have a reason and are willing to have the same
+result appear in the workflow run a minute later.
+MSG
+exit 1

@@ -1,0 +1,23 @@
+# Venue names no component above the adapter contract may mention.
+#
+# The adapter contract: "no component above the contract may name a venue. A grep for venue
+# names across the engines and the core is a gate, exempting only the adapter crates and the
+# registry. This is crude on purpose - it is the check that keeps working when everyone who
+# agreed to the rule has moved on."
+#
+# The crudeness is the feature. Tests are not exempt: a carve-out for "it is only a fixture" is
+# the first step of the erosion this rule exists to resist, and the next carve-out is "it is
+# only a constant". Two violations existed before the gate did, both in test fixtures, and both
+# were placeholders in every meaningful sense - which is exactly why they were easy to leave.
+#
+# The list is the professional target portfolio. Held outside the scanned tree, like the identity
+# tokens, so the file does not have to exempt itself.
+
+alpaca
+bybit
+hyperliquid
+binance
+okx
+polymarket
+bitget
+kalshi

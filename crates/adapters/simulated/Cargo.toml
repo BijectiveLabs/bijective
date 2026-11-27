@@ -1,0 +1,25 @@
+# The simulated venue: a deterministic matching engine behind the venue contract, so research and
+# paper runs produce fills through the same lifecycle path as live. Opens nothing.
+
+[package]
+name = "bijective-venue-simulated"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_venue_simulated"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-model = { path = "../../model" }
+bijective-venue = { path = "../../venue" }
+bijective-lifecycle = { path = "../../lifecycle" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }
+
+[lints.rust]
+unsafe_code = "forbid"

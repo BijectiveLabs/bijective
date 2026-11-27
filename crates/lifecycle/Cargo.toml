@@ -1,0 +1,20 @@
+# Order lifecycle, fills and positions: pure state machines, no I/O, no clock.
+# In the core because execution, reconciliation and replay must agree on one definition.
+
+[package]
+name = "bijective-lifecycle"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[lib]
+name = "bijective_lifecycle"
+crate-type = ["rlib"]
+
+[dependencies]
+bijective-model = { path = "../model" }
+
+[lints.rust]
+unsafe_code = "forbid"
