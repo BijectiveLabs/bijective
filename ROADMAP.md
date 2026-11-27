@@ -66,7 +66,8 @@ It reflects the tree as of 2026-11-27.
    archive, run backtests and paper runs, and read their results and evaluation. The agent reaches
    the platform through the paths a person uses. It proposes through a strategy in the sandbox,
    holds no credential, and has no route to a live order that bypasses risk evaluation and an
-   operator's signed promotion. Read-only by default.
+   operator's signed promotion. Read-only by default
+   ([decision 0020](docs/decisions/0020-mcp-server-for-research-agents.md), proposed).
 
 ## Scope
 

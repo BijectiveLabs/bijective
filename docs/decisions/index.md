@@ -24,3 +24,4 @@ the code that carries it out.
 | [0017](0017-one-console-for-every-run-mode.md) | One console for every run mode: research and trading are the same views of different runs |
 | [0018](0018-paper-venue-rebuilt-from-its-record.md) | A paper venue is rebuilt from its record at start, so a restarted paper run continues |
 | [0019](0019-market-journal-durable-per-batch.md) | The market journal is made durable per batch of what is already waiting, never per frame |
+| [0020](0020-mcp-server-for-research-agents.md) | Proposed: an MCP server through which a research agent runs the research programs, with no route to an order |
