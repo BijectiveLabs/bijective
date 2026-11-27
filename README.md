@@ -4,11 +4,11 @@
 [![Licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
 ![Rust 1.97.1](https://img.shields.io/badge/rust-1.97.1-orange?logo=rust)
 ![Python 3.12 to 3.14](https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab?logo=python&logoColor=white)
-![Status: pre-release](https://img.shields.io/badge/status-pre--release-lightgrey)
+[![Release](https://img.shields.io/github/v/release/BijectiveLabs/bijective?include_prereleases)](https://github.com/BijectiveLabs/bijective/releases)
 
 | Branch   | Version | Build |
 | :------- | :------ | :---- |
-| `master` | 0.1.0, not yet released | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `master` | 0.1.0 | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 | `dev`    | 0.1.0, in development   | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 
 | Platform                      | Rust   | Python      | Notes |
@@ -40,7 +40,7 @@ the node writes is documented, so everything it holds can be read without anythi
 
 ## Status
 
-Early development. No version has been released and interfaces will change. Status as of
+Early development: version 0.1.0, and interfaces will change before 1.0. Status as of
 2026-11-27, with the evidence for each venue on its [integration page](docs/integrations/index.md).
 
 | Area | State |
@@ -58,7 +58,7 @@ Early development. No version has been released and interfaces will change. Stat
 | Market history from a client's CSV or JSON Lines file | Built for top-of-book rows (decision 0016, stage 1) |
 | Reconciliation, execution cost, failure detection | Reconciliation on a cadence and on venue reports, and an execution cost table against the book at the decision, built. Missing-event evaluation planned |
 | Operator console | Built: one console for every run mode (decision 0017), TLS with client certificates, signed commands, tables and an event stream for programs, OpenMetrics |
-| Deployment kit | Built: release artefact and systemd units verified, container composition from the same manifest. The release workflow builds the artefact and the node image on demand. Nothing is published yet |
+| Deployment kit | Built: release artefact and systemd units verified, container composition from the same manifest. The release workflow publishes the artefact and the node image from a version tag |
 
 ## Design commitments
 
@@ -78,18 +78,18 @@ Early development. No version has been released and interfaces will change. Stat
 
 ## Versioning and releases
 
-> **Bijective is in early development.** No version has been released yet. Until 1.0, a minor
-> version may change an interface, a format or a flag. Every such change is stated in the release
+> **Bijective is in early development.** Until 1.0, a minor version may change an interface, a
+> format or a flag. Every such change is stated in the release
 > notes with the action an operator must take.
 
 - **Version numbers** follow [Semantic Versioning](https://semver.org). The platform version is the
   one the deployment manifest declares, and every runbook is bound to it (`Runbooks` gate).
 - **Release notes** are in [RELEASES.md](RELEASES.md): what changed, and any action an operator must
   take before or after upgrading.
-- **Release artefacts** are built and verified by `.github/workflows/release.yml`: the binaries, the
-  generated units, the strategy library and a recorded digest of each file, checked before anything
-  is unpacked ([verify a release](docs/how_to/verify_a_release.md)). Publication starts with the
-  first release.
+- **Release artefacts** are published from a version tag by `.github/workflows/release.yml`: the
+  binaries, the generated units, the strategy library and a recorded digest of each file, checked
+  before anything is unpacked ([verify a release](docs/how_to/verify_a_release.md)), and the node
+  image at `ghcr.io/bijectivelabs/bijective`.
 
 ### Branches
 

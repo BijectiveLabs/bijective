@@ -75,8 +75,8 @@ Not yet covered, and stated so a first run is not a surprise:
   until it has.
 - The image holds no Python runtime, so it cannot run client strategies.
 - The change gates do not build the `Dockerfile`. The release workflow
-  (`.github/workflows/release.yml`, on demand) builds the image and keeps it as a workflow artefact.
-  Nothing is published. The composition is checked against the manifest by
+  (`.github/workflows/release.yml`) builds the image and, on a version tag, publishes it as
+  `ghcr.io/bijectivelabs/bijective:<version>`. The composition is checked against the manifest by
   `crates/deployment/tests/shipped_compose.rs`.
 
 ## Operators

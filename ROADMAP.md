@@ -39,8 +39,8 @@ It reflects the tree as of 2026-11-27.
   record, TLS with client certificates, signed commands, every panel as a table and as an event
   stream, OpenMetrics, an execution cost table against the book at the decision, and strategy
   performance of every run side by side.
-- The deployment kit, readiness, the change gates, and a release workflow that builds and
-  verifies the release artefact and the node image on demand.
+- The deployment kit, readiness, the change gates, and a release workflow that builds, verifies
+  and, on a version tag, publishes the release artefact, the strategy library and the node image.
 - Market capture sized by measurement: the market journal is made durable per batch of what is
   already waiting (decision 0019), and the technologies examined and not adopted are recorded
   with their evidence ([Technology](docs/concepts/technology.md)).
@@ -50,8 +50,8 @@ It reflects the tree as of 2026-11-27.
 
 1. **Order feedback in a backtest.** The strategy told of its orders and fills at the position it
    would be told in paper and live (decision 0015, stage 2).
-2. **Published releases.** Release artefacts and the node image published, so a first run needs
-   no build. The release workflow builds both today and keeps them as workflow artefacts only.
+2. **Packages on registries.** The strategy library on PyPI, and a `bijective` package that installs
+   the programs, so a first run needs neither a build nor a download by hand.
 3. **More of your own data.** Trades, funding, mark prices, open interest, Parquet input and
    OHLCV bars from a client's files (decision 0016, stage 2).
 4. **Venues.** Exercise Hyperliquid and Polymarket execution end to end against the venue, then
