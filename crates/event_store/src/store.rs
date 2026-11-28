@@ -127,8 +127,30 @@ pub(crate) fn read_file(path: &Path) -> Result<Vec<u8>, StoreError> {
 /// Judge one segment file. A file that cannot be opened is `Unreadable`, never empty.
 pub fn verify_segment(path: &Path) -> Verdict {
     match read_file(path) {
-        Ok(bytes) => verify_image(&bytes),
+        Ok(bytes) => judge(path, &bytes),
         Err(_) => Verdict::Unreadable { reason: UnreadableReason::IoError },
+    }
+}
+
+/// Judge a segment's bytes, and hold a sealed one to its manifest.
+/// A segment cut short at an entry boundary chains cleanly, so only the manifest can tell it was cut.
+/// A manifest that is absent or does not verify leaves the judgement to the bytes: recovery seals
+/// after a crash, and an interrupted seal must not make the stream unopenable.
+fn judge(segment: &Path, bytes: &[u8]) -> Verdict {
+    let verdict = verify_image(bytes);
+    let Verdict::Clean { entries, first_seq, last_link, sealed_len, .. } = verdict else {
+        return verdict;
+    };
+    match read_manifest(&segment.with_extension("manifest")) {
+        Some(m)
+            if m.entries != entries
+                || m.first_seq != first_seq
+                || m.bytes != sealed_len
+                || m.last_link != last_link =>
+        {
+            Verdict::Corrupt { at_offset: sealed_len, reason: CorruptReason::ManifestMismatch }
+        }
+        _ => verdict,
     }
 }
 
@@ -465,7 +487,7 @@ pub fn end_of(root: &Path, stream: &str) -> Result<Option<u64>, StoreError> {
     for index in segment_indices(&dir)?.into_iter().rev() {
         let path = segment_path(&dir, index);
         let bytes = read_file(&path)?;
-        match verify_image(&bytes) {
+        match judge(&path, &bytes) {
             Verdict::Clean { last_seq, entries, .. } => {
                 if entries > 0 {
                     return Ok(Some(last_seq));
@@ -496,7 +518,7 @@ pub fn read_range(root: &Path, stream: &str, from: u64, to: u64) -> Result<Vec<E
     for index in segment_indices(&dir)? {
         let path = segment_path(&dir, index);
         let bytes = read_file(&path)?;
-        match verify_image(&bytes) {
+        match judge(&path, &bytes) {
             Verdict::Clean { first_seq, last_seq, entries, .. } => {
                 // A segment an interrupted prune left lies below the horizon, so below `from`.
                 if entries == 0 || last_seq < from || first_seq > to {
@@ -533,7 +555,7 @@ pub fn read_tail(root: &Path, stream: &str, count: usize) -> Result<Vec<Entry>, 
         }
         let path = segment_path(&dir, index);
         let bytes = read_file(&path)?;
-        let verdict = verify_image(&bytes);
+        let verdict = judge(&path, &bytes);
         if !matches!(verdict, Verdict::Clean { .. }) {
             return Err(StoreError::Quarantined { segment: path, verdict });
         }

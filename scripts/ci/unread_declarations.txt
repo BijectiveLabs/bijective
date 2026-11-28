@@ -45,7 +45,6 @@ Resolution::Second	crates/decision_capture/src/lib.rs	as Microsecond
 SubscribeError::NotConnected	crates/venue/src/contract/subscription.rs	nothing constructs it: neither adapter refuses a subscribe made while disconnected, so the transport's own failure arrives instead
 Subscription.attached_at_ns	crates/common/src/bus/mod.rs	as behind_by
 Verdict.unregistered	crates/evaluation/src/evidence/preregistration.rs	research integrity; figures the registration never named, read by whatever reports a verdict to an operator - the console's surface, not built
-Verdict::Clean.sealed_len	crates/event_store/src/format.rs	the segment's true end, for a recovery that must distinguish a torn tail from a short segment; read by the drill and by no production caller
 VerificationStamp.verifier_version	crates/venue/src/profile/declaration.rs	venue assurance's verifier is not built, so nothing stamps a version and nothing reads one
 Withdrawal.unresolved	crates/control_engine/src/path/decision.rs	the operator command that would act on it needs a live-order registry
 admits	crates/risk/src/desks/mod.rs	a mandate's own admission test; the desk selector that would consult it is not built
@@ -86,6 +85,7 @@ Inbound::Resumed.missed	crates/strategy_engine/src/protocol/mod.rs	the same line
 AuditFinding.detail	crates/strategy_engine/src/runs/mod.rs	an auditor's artefact; research integrity fixes the class and nothing consumes its findings yet
 Observation.detail	crates/strategy_engine/src/runs/mod.rs	an observer's artefact, for the same reason as AuditFinding.detail
 CorruptReason::PayloadLengthOutOfRange.found	crates/event_store/src/format.rs	carried so a quarantine names the figure it saw; read by an operator through Debug, which no sweep counts
+CorruptReason::PayloadLengthDamaged.found	crates/event_store/src/format.rs	the length the damaged header claimed, so a quarantine names it; read by an operator through Debug, which no sweep counts
 CorruptReason::SequenceBreak.expected	crates/event_store/src/format.rs	the same: what a torn segment claimed against what it should have, reported rather than branched on
 CorruptReason::SequenceBreak.found	crates/event_store/src/format.rs	the other half of that comparison, and it is the pair that makes the message worth reading
 UnreadableReason::UnknownFormatVersion.found	crates/event_store/src/format.rs	names the version a segment declared, so an operator meeting a future store is told which build wrote it

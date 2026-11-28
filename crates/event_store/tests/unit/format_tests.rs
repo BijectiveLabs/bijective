@@ -245,3 +245,61 @@ fn an_empty_payload_is_a_real_entry() {
     assert_eq!(got[0].payload, Vec::<u8>::new());
     assert_ne!(got[0].link, sha256(b""), "an entry link is not a bare payload hash");
 }
+
+/// Overwrite the length field of the entry at `entry_offset` with `claimed`.
+fn claim_length(img: &mut [u8], entry_offset: usize, claimed: u32) {
+    img[entry_offset + 2..entry_offset + 6].copy_from_slice(&claimed.to_be_bytes());
+}
+
+/// A damaged length that points past the end looks like a torn tail by shape alone.
+/// It is not one: the entry it describes is whole, and every entry after it was acknowledged.
+#[test]
+fn a_length_damaged_past_the_end_mid_segment_is_corrupt_not_a_torn_tail() {
+    let mut img = image(1, &[b"alpha", b"beta", b"gamma"]);
+    let second = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    claim_length(&mut img, second, 70_000);
+
+    match verify_image(&img) {
+        Verdict::Corrupt { reason, at_offset } => {
+            assert_eq!(reason, CorruptReason::PayloadLengthDamaged { found: 70_000 });
+            assert_eq!(at_offset, second as u64);
+        }
+        other => panic!("expected Corrupt, got {other:?}"),
+    }
+}
+
+/// The last entry has no successor to betray it, so its own link over the bytes that remain decides.
+#[test]
+fn a_length_damaged_past_the_end_on_the_last_entry_is_corrupt() {
+    let mut img = image(1, &[b"alpha", b"beta"]);
+    let last = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    claim_length(&mut img, last, 0x00FF_0000);
+
+    match verify_image(&img) {
+        Verdict::Corrupt { reason, at_offset } => {
+            assert_eq!(reason, CorruptReason::PayloadLengthDamaged { found: 0x00FF_0000 });
+            assert_eq!(at_offset, last as u64);
+        }
+        other => panic!("expected Corrupt, got {other:?}"),
+    }
+}
+
+/// A torn batch: one whole header, part of its payload, then nothing. Still a torn tail.
+#[test]
+fn a_torn_tail_whose_payload_holds_a_marker_is_still_clean() {
+    let mut img = image(1, &[b"alpha"]);
+    let good_len = img.len();
+    let mut torn = b"padding ".to_vec();
+    torn.extend_from_slice(&entry_header(3, 4, Digest::genesis()));
+    let link = entry_link(Digest::genesis(), 2, &[0u8; 400]);
+    img.extend_from_slice(&entry_header(2, 400, link));
+    img.extend_from_slice(&torn);
+
+    match verify_image(&img) {
+        Verdict::Clean { entries, sealed_len, .. } => {
+            assert_eq!(entries, 1);
+            assert_eq!(sealed_len as usize, good_len);
+        }
+        other => panic!("expected Clean, got {other:?}"),
+    }
+}

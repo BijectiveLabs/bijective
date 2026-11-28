@@ -422,3 +422,32 @@ fn a_corrupt_segment_in_the_tail_is_an_error_not_a_shorter_tail() {
     fs::write(&path, &bytes).unwrap();
     assert!(matches!(read_tail(&r, "market", 2), Err(StoreError::Quarantined { .. })));
 }
+
+/// A sealed segment cut short at an entry boundary chains cleanly. Its manifest says what was sealed.
+#[test]
+fn a_sealed_segment_cut_short_is_refused_by_its_manifest() {
+    let r = root("cut-short");
+    {
+        let mut w = StreamWriter::open(&r, "orders").unwrap();
+        w.append(b"one").unwrap();
+        w.append(b"two").unwrap();
+        w.rotate().unwrap();
+        w.append(b"three").unwrap();
+    }
+    let seg = seg0(&r, "orders");
+    let whole = fs::read(&seg).unwrap();
+    let cut = whole.len() - ENTRY_HEADER_LEN - b"two".len();
+    let mut perms = fs::metadata(&seg).unwrap().permissions();
+    #[allow(clippy::permissions_set_readonly_false)]
+    perms.set_readonly(false);
+    fs::set_permissions(&seg, perms).unwrap();
+    fs::write(&seg, &whole[..cut]).unwrap();
+
+    match verify_segment(&seg) {
+        Verdict::Corrupt { reason: CorruptReason::ManifestMismatch, at_offset } => {
+            assert_eq!(at_offset, cut as u64);
+        }
+        other => panic!("expected Corrupt against the manifest, got {other:?}"),
+    }
+    assert!(matches!(read_range(&r, "orders", 0, 10), Err(StoreError::Quarantined { .. })));
+}

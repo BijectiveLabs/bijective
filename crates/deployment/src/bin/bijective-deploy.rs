@@ -9,6 +9,8 @@ use std::path::{Path, PathBuf};
 use bijective_deployment::{
     Checksums, Deployment, NodeState, artefact, assess_node, compose, generate,
 };
+use bijective_event_store::format::{ENTRY_HEADER_LEN, SEGMENT_HEADER_LEN, Verdict};
+use bijective_event_store::store::verify_segment;
 
 fn main() -> std::process::ExitCode {
     let mut args = std::env::args().skip(1);
@@ -326,23 +328,27 @@ fn prove_refusals(restored: &Path) -> Result<Vec<String>, String> {
     copy_tree(restored, &scratch).map_err(|e| format!("could not build a proof copy: {e}"))?;
 
     let segment = find_segment(&scratch)
-        .ok_or("the restored copy holds no segment, so nothing can be corrupted")?;
+        .ok_or("the restored copy holds no segment with an entry, so nothing can be corrupted")?;
+    let pristine = std::fs::read(&segment).map_err(|e| format!("proof copy unreadable: {e}"))?;
 
-    // Flipped inside a complete entry: an appended byte is a torn tail, which the store treats as clean.
-    let mut bytes = std::fs::read(&segment).map_err(|e| format!("proof copy unreadable: {e}"))?;
-    if bytes.len() < 4 {
-        return Err("the restored segment is too small to corrupt meaningfully".into());
+    // Fixed offsets in the first entry, so every run proves the same two refusals.
+    for (damage, offset) in [
+        ("a damaged payload byte", ENTRY_PAYLOAD_AT),
+        ("a length damaged to run past the end", ENTRY_LENGTH_AT),
+    ] {
+        let mut bytes = pristine.clone();
+        if bytes.len() <= offset {
+            let _ = std::fs::remove_dir_all(&scratch);
+            return Err("the restored segment is too small to corrupt meaningfully".into());
+        }
+        bytes[offset] ^= 0xFF;
+        std::fs::write(&segment, &bytes).map_err(|e| format!("could not write proof copy: {e}"))?;
+        if bijective_deployment::host::sweep(&scratch).is_healthy() {
+            let _ = std::fs::remove_dir_all(&scratch);
+            return Err(format!("a segment with {damage} verified clean"));
+        }
+        proven.push(format!("a copy with {damage} is refused"));
     }
-    let middle = bytes.len() / 2;
-    bytes[middle] ^= 0xFF;
-    std::fs::write(&segment, &bytes).map_err(|e| format!("could not write proof copy: {e}"))?;
-
-    let swept = bijective_deployment::host::sweep(&scratch);
-    if swept.is_healthy() {
-        let _ = std::fs::remove_dir_all(&scratch);
-        return Err("a segment corrupted inside a complete entry verified clean".into());
-    }
-    proven.push("a copy corrupted inside a complete entry is refused".to_string());
 
     // Exercised against the copy that is still on disk, before it is removed.
     if target_is_usable(&scratch) {
@@ -360,7 +366,16 @@ fn target_is_usable(into: &Path) -> bool {
     !into.exists() || std::fs::read_dir(into).map(|mut d| d.next().is_none()).unwrap_or(false)
 }
 
+/// The first byte of the first entry's payload in a segment.
+const ENTRY_PAYLOAD_AT: usize = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN;
+/// The second byte of the first entry's length: flipped, it claims more than the segment holds
+/// while staying under the payload bound, which is the damage that resembles a torn tail.
+const ENTRY_LENGTH_AT: usize = SEGMENT_HEADER_LEN + 3;
+
+/// The first segment, in path order, that holds at least one whole entry with a payload.
+/// Path order, not directory order, so the drill corrupts the same file on every host.
 fn find_segment(root: &Path) -> Option<PathBuf> {
+    let mut found = Vec::new();
     let mut stack = vec![root.to_path_buf()];
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir).ok()?.flatten() {
@@ -368,11 +383,19 @@ fn find_segment(root: &Path) -> Option<PathBuf> {
             if path.is_dir() {
                 stack.push(path);
             } else if path.extension().is_some_and(|e| e == "seg") {
-                return Some(path);
+                found.push(path);
             }
         }
     }
-    None
+    found.sort();
+    found.into_iter().find(|path| {
+        let first_payload_len = std::fs::read(path).ok().and_then(|b| {
+            b.get(SEGMENT_HEADER_LEN + 2..SEGMENT_HEADER_LEN + 6)
+                .map(|l| u32::from_be_bytes([l[0], l[1], l[2], l[3]]))
+        });
+        matches!(verify_segment(path), Verdict::Clean { entries, .. } if entries > 0)
+            && first_payload_len.is_some_and(|len| len > 0)
+    })
 }
 
 fn copy_tree(from: &Path, to: &Path) -> std::io::Result<usize> {

@@ -53,6 +53,10 @@ pub enum CorruptReason {
     EntryMarker,
     /// A length field exceeds `MAX_PAYLOAD_LEN`.
     PayloadLengthOutOfRange { found: u32 },
+    /// A length field runs past the end, yet the entry it heads is whole: the length was damaged.
+    PayloadLengthDamaged { found: u32 },
+    /// A sealed segment does not hold what its manifest says was sealed: cut short, or re-cut.
+    ManifestMismatch,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -223,6 +227,13 @@ fn walk(
 
         let total = ENTRY_HEADER_LEN + payload_len as usize;
         if remaining < total {
+            let mut link_b = [0u8; 32];
+            link_b.copy_from_slice(&hdr[14..46]);
+            let stored = Digest(link_b);
+            if is_whole_under_damaged_length(&bytes[offset..], prev_link, expected_seq, stored) {
+                let reason = CorruptReason::PayloadLengthDamaged { found: payload_len };
+                return Err(corrupt(offset, reason));
+            }
             // Header whole, payload not: still a torn tail, never acknowledged to a caller.
             return Ok(done(entries, remaining));
         }
@@ -252,6 +263,32 @@ fn walk(
         entries += 1;
         offset += total;
     }
+}
+
+/// Whether an entry whose length runs past the end is in fact whole, so its length was damaged.
+/// Shape alone cannot tell a damaged length from a torn write: both run past the end. A torn write
+/// leaves a prefix of its payload, so the entry's own link verifies at no end. The ends tried are
+/// the end of the bytes and each place a successor header could begin (marker and next position).
+/// Cost: one scan of the tail plus one hash per candidate. Candidates are rare by construction, and
+/// this runs only on a tail, so the order path never pays it.
+fn is_whole_under_damaged_length(
+    entry: &[u8],
+    prev_link: Digest,
+    seq: u64,
+    stored: Digest,
+) -> bool {
+    let payload = &entry[ENTRY_HEADER_LEN..];
+    if entry_link(prev_link, seq, payload) == stored {
+        return true;
+    }
+    let next = seq.wrapping_add(1).to_be_bytes();
+    let starts = payload.len().saturating_sub(ENTRY_HEADER_LEN - 1);
+    (0..starts).any(|at| {
+        let successor = &payload[at..at + ENTRY_HEADER_LEN];
+        successor[0..2] == ENTRY_MAGIC
+            && successor[6..14] == next
+            && entry_link(prev_link, seq, &payload[..at]) == stored
+    })
 }
 
 /// Read every entry up to the last complete one. `None` unless `Clean`, so a condemned segment cannot be read.
