@@ -1,6 +1,6 @@
 # Detect a unit that no longer matches the release
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: crates/deployment/tests/unit/tests.rs
 Applies-To: any running host; run after any change to the init configuration
 

@@ -14,9 +14,7 @@ but opened no venue, so every proposal there had no eligible venue.
 
 Nautilus (`BacktestEngine`) and LEAN run one process with a simulated clock and a simulated
 exchange, and deliver fills to the strategy as events. Two rules of this platform constrain the
-same design here: the strategy engine never links the venue or the risk code (gate `Agent
-environment`), and the control engine is the only issuer of a clearance (gate `Order path
-closed`). The backtest therefore stays two programs, as paper is.
+same design here: the strategy engine never links the venue or the risk code (gate `Agent environment`), and the control engine is the only issuer of a clearance (gate `Order path closed`). The backtest therefore stays two programs, as paper is.
 
 ## Decision
 

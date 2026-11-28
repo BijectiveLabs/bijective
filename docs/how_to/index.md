@@ -25,3 +25,4 @@ match the release or whose drill does not exist.
 - [Move a node to another host](move_a_node_to_another_host.md)
 - [Run a node on a Windows workstation](run_a_node_on_a_windows_workstation.md)
 - [Reach the console from another machine](reach_the_console.md)
+- [Connect a research agent](connect_a_research_agent.md)

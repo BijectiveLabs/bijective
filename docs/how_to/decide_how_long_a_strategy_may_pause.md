@@ -1,6 +1,6 @@
 # Decide how long a strategy may pause
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/measure/backpressure.sh
 Applies-To: before a paper or live session on a venue this node has not carried before, and after
             any change to the queue behind a live strategy

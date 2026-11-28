@@ -1,0 +1,61 @@
+# Builds the documentation site from docs/ on every change, so a page that does not build fails the
+# change that broke it. Publishes it from master, the latest release, at
+# https://docs.bijectivelabs.dev/bijective/, and only from the open-core repository.
+
+name: Docs
+
+on:
+  push:
+    branches: [master, dev]
+    paths: ["docs/**", ".github/workflows/docs.yml"]
+  pull_request:
+    branches: [master, dev]
+    paths: ["docs/**", ".github/workflows/docs.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The last-updated date of each page comes from its history.
+          fetch-depth: 0
+
+      - name: Build the site
+        working-directory: docs
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run build
+
+      # The domain's root, and forwarding pages for the addresses the TRA documentation had here.
+      - name: Lay out the domain
+        run: node docs/.vitepress/site-root.mjs docs/.vitepress/dist "$RUNNER_TEMP/site"
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        if: github.ref == 'refs/heads/master' && github.repository == 'BijectiveLabs/bijective'
+        with:
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    if: github.ref == 'refs/heads/master' && github.repository == 'BijectiveLabs/bijective'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5

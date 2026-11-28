@@ -18,7 +18,9 @@ fail() { say "FAIL  $*"; status=1; }
 
 command -v cargo >/dev/null 2>&1 || { say "FAIL  no cargo on PATH, so the release path is UNVERIFIED"; exit 1; }
 
-for target in crates/deployment crates/strategy_engine crates/evaluation crates/control_engine crates/data_engine crates/venue_assurance; do
+# Every crate whose program the artefact carries (scripts/release/assemble.sh).
+for target in crates/deployment crates/strategy_engine crates/evaluation crates/control_engine \
+    crates/data_engine crates/venue_assurance crates/console crates/cli crates/secrets_broker crates/mcp; do
     if ! out="$(cd "${CORE}/${target}" && cargo build --quiet --offline 2>&1)"; then
         say "FAIL  ${target} did not build"
         printf '%s\n' "$out" | tail -3

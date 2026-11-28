@@ -35,8 +35,7 @@ which is when positions are closed, no reduction could be placed at all.
    or stale figures are why positions are closed, so they cannot be what stops the closing. The
    order path judges each flatten order on its record (reduce-only, within what is held), on the
    venue's instrument rules and on its order rate; nothing is drawn from a budget. The clearance
-   it carries (`Clearance::for_operator_reduction`) is minted in one place, which the `Order path
-   closed` gate holds.
+   it carries (`Clearance::for_operator_reduction`) is minted in one place, which the `Order path closed` gate holds.
 4. **The record is the quantity, and an untrusted record is not used.** A venue whose latest
    evidence read failed or whose reconciliation diverged is reported, not flattened: closing by a
    quantity the record cannot vouch for could open the other side where the venue does not

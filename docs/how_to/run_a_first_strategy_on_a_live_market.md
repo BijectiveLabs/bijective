@@ -1,6 +1,6 @@
 # Run a first strategy on a live market
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/first_run.sh
 Applies-To: a first paper run and backtest on a real public market, before any venue key exists
 

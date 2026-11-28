@@ -9,3 +9,8 @@ __pycache__/
 # (docs/how_to/load_a_venue_credential.md); a file like this must never be committed.
 .env*
 !.env.example
+
+# The documentation site: dependencies and build output are not the source.
+docs/node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

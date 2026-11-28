@@ -6,6 +6,21 @@ GitHub release with the artefact, its SHA-256 digest and the strategy library, a
 at `ghcr.io/bijectivelabs/bijective`. Verify an artefact before installing it with
 [Verify a release before installing it](docs/how_to/verify_a_release.md).
 
+## 0.1.1
+
+- **An MCP server for research agents** (decision 0020): `bijective-mcp` lets an AI agent write,
+  run and judge strategies through the research programs, read-only unless the operator allows
+  backtests, with no route to an order ([connect a research agent](docs/how_to/connect_a_research_agent.md)).
+- **The artefact carries every program its documentation uses**: the console, the operator command
+  line (`bijective`), the keystore tool (`bijective-secrets`), the deployment kit (`bijective-deploy`)
+  and `bijective-mcp`, beside the programs 0.1.0 carried.
+- **Documentation site** at https://docs.bijectivelabs.dev/bijective/, built from `docs/` in the
+  same commit as the source it describes.
+
+Operator action: install the units generated from the 0.1.1 manifest, as for any release
+([install a node and bring it up](docs/how_to/install_and_start_a_node.md)). The store and the
+configuration carry over unchanged.
+
 ## 0.1.0
 
 The first release. Interfaces, formats and flags may change in a later 0.x release, and each such

@@ -25,6 +25,7 @@ members = [
     "crates/event_store",
     "crates/identity",
     "crates/lifecycle",
+    "crates/mcp",
     "crates/limits",
     "crates/model",
     "crates/ordering",

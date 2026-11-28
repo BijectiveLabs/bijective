@@ -6,10 +6,14 @@
 ![Python 3.12 to 3.14](https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab?logo=python&logoColor=white)
 [![Release](https://img.shields.io/github/v/release/BijectiveLabs/bijective?include_prereleases)](https://github.com/BijectiveLabs/bijective/releases)
 
+[![Website](https://img.shields.io/badge/WEBSITE-1f6feb?style=for-the-badge)](https://www.bijectivelabs.dev/bijective)
+[![Docs](https://img.shields.io/badge/DOCS-0e8a5f?style=for-the-badge)](https://docs.bijectivelabs.dev/bijective/)
+[![Insight](https://img.shields.io/badge/INSIGHT-7c3aed?style=for-the-badge)](https://www.bijectivelabs.dev/insights)
+
 | Branch   | Version | Build |
 | :------- | :------ | :---- |
-| `master` | 0.1.0 | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
-| `dev`    | 0.1.0, in development   | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `master` | 0.1.1, the latest release | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `dev`    | development, the default branch | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 
 | Platform                      | Rust   | Python      | Notes |
 | :---------------------------- | :----- | :---------- | :---- |
@@ -20,7 +24,7 @@
 macOS and native Windows are not supported: the strategy sandbox is built on Linux namespaces and
 cgroup v2.
 
-- **Documentation**: [docs/](docs/index.md)
+- **Documentation**: [docs.bijectivelabs.dev/bijective](https://docs.bijectivelabs.dev/bijective/), built from [docs/](docs/index.md)
 - **Roadmap**: [ROADMAP.md](ROADMAP.md)
 - **Security**: [SECURITY.md](SECURITY.md)
 
@@ -40,7 +44,7 @@ the node writes is documented, so everything it holds can be read without anythi
 
 ## Status
 
-Early development: version 0.1.0, and interfaces will change before 1.0. Status as of
+Early development: version 0.1.1, and interfaces will change before 1.0. Status as of
 2026-11-27, with the evidence for each venue on its [integration page](docs/integrations/index.md).
 
 | Area | State |
@@ -55,6 +59,7 @@ Early development: version 0.1.0, and interfaces will change before 1.0. Status 
 | Simulated venue, paper runs | Built: orders, fills, positions and reconciliation run the live code with no order leaving the node. A paper venue is rebuilt from its record at start (decision 0018) and reconciled once more when the run stops |
 | Backtest | Built: proposals measured against the recorded market and, given a node configuration, placed on simulated venues through the order path (decision 0015, stage 1). The strategy is not yet told of its fills in a backtest (stage 2) |
 | Strategy sandbox, live sessions, promotion stages | Built (Linux, cgroup v2) |
+| MCP server for research agents | Built: `bijective-mcp` runs the research programs for an agent, read-only by default, with no route to an order (decision 0020) |
 | Market history from a client's CSV or JSON Lines file | Built for top-of-book rows (decision 0016, stage 1) |
 | Reconciliation, execution cost, failure detection | Reconciliation on a cadence and on venue reports, and an execution cost table against the book at the decision, built. Missing-event evaluation planned |
 | Operator console | Built: one console for every run mode (decision 0017), TLS with client certificates, signed commands, tables and an event stream for programs, OpenMetrics |
@@ -93,8 +98,10 @@ Early development: version 0.1.0, and interfaces will change before 1.0. Status 
 
 ### Branches
 
-- `master`: the latest released version.
-- `dev`: active development. Every change passes the same gates as a release.
+- `master`: the latest released version, and the most stable branch. Nothing is written to it
+  directly: it moves only by a pull request from `dev` that passes CI, at a release.
+- `dev`: the default branch, where development happens and pull requests land. Every change
+  passes the same gates as a release.
 
 ## Engineering practices
 
@@ -176,7 +183,8 @@ what to include and the security model are in [SECURITY.md](SECURITY.md).
 
 ## Contributing
 
-Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Run the gates before a pull request:
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[code of conduct](CODE_OF_CONDUCT.md). Pull requests target `dev`. Run the gates before opening one:
 `bash scripts/ci/run_gates.sh`.
 
 ## License

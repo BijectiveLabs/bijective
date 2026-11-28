@@ -1,6 +1,6 @@
 # Import market history from a file
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/import_path.sh
 Applies-To: backtesting on history a client already holds, as CSV or JSON Lines top-of-book rows
 

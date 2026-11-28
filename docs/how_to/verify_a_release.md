@@ -1,6 +1,6 @@
 # Verify a release before installing it
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/release.sh
 Applies-To: any host, before the first install and before every upgrade
 
@@ -12,8 +12,7 @@ refused - a manifest that only checks what it names permits anything to be added
 
 ## Steps
 
-0. On the build host, assemble the artefact and record it: `scripts/release/assemble.sh release
-   <artefact-dir>`, which runs `bijective-deploy record <artefact-dir> <platform-version>`. The
+0. On the build host, assemble the artefact and record it: `scripts/release/assemble.sh release <artefact-dir>`, which runs `bijective-deploy record <artefact-dir> <platform-version>`. The
    release workflow (`.github/workflows/release.yml`, run on a version tag) does the same on a clean
    runner, verifies the result and keeps the archive, its SHA-256 and the node image. The recorder and the verifier are
    the same code walking the same tree - a manifest written by a separate script agrees with

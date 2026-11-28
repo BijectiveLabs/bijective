@@ -29,12 +29,14 @@ print(json.load(open(sys.argv[1]))['platform_version'])
 
 mkdir -p "${OUT}/bin" "${OUT}/units" "${OUT}/lib/python"
 # Programs a node runs and commands an operator runs, so an operator can try a release without
-# building it. The control engine beside bijective-backtest runs a backtest's order path
-# (decision 0015). The recorder, the importer, the profile drafter and the paper launcher make a
-# first run need no key.
+# building it: the console, the operator command line, the keystore tool, the deployment kit and
+# the MCP server a research agent talks to. The control engine beside bijective-backtest runs a
+# backtest's order path (decision 0015). The recorder, the importer, the profile drafter and the
+# paper launcher make a first run need no key.
 for binary in bijective-operational-host bijective-strategy-engine bijective-backtest \
     bijective-control-engine bijective-data-engine bijective-import bijective-profile \
-    bijective-paper bijective-promote bijective-report; do
+    bijective-paper bijective-promote bijective-report bijective-console bijective \
+    bijective-secrets bijective-deploy bijective-mcp; do
     cp "${BUILT}/${binary}" "${OUT}/bin/"
 done
 cp "${CORE}/crates/deployment/deployment.json" "${OUT}/"

@@ -1686,11 +1686,13 @@ gate_security() {
     # The no-egress rule: no operator data leaves the operator's infrastructure. Adapters are exempt by name.
     # Patterns name egress constructs, not words: `socket\.` fired on variables and missed `connect_async`.
     # One sandbox file is exempt by name, not by directory: its gates open a loopback listener to prove the run cannot reach it.
+    # One MCP file is exempt by name: it reads a table from the console it started itself, on 127.0.0.1 only (decision 0020).
     local egress
     egress="$(grep -rIn -E 'reqwest::|connect_async|TcpStream::connect|urllib|http\.client|socket\.socket|requests\.(get|post|put|delete)' \
         "${CORE}" --include=*.rs --include=*.py 2>/dev/null \
         | grep -v '/\.venv/' | grep -v '/target/' | grep -v "${CORE}/crates/adapters/" \
-        | grep -v "${CORE}/crates/sandbox/tests/unit/tests.rs:" || true)"
+        | grep -v "${CORE}/crates/sandbox/tests/unit/tests.rs:" \
+        | grep -v "${CORE}/crates/mcp/src/panels.rs:" || true)"
     [ -n "$egress" ] && detail+="egress-candidates:$(echo "$egress" | wc -l) "
 
     [ -n "$detail" ] && record "FAIL" "Security checks" "$detail" \

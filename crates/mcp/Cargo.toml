@@ -1,0 +1,20 @@
+# The MCP server a research agent talks to (decision 0020). It runs the platform's research
+# programs and links no engine, so it has no route to a credential, a venue or an order.
+
+[package]
+name = "bijective-mcp"
+version = "0.1.1"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+license.workspace = true
+
+[[bin]]
+name = "bijective-mcp"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "1"
+
+[lints.rust]
+unsafe_code = "forbid"

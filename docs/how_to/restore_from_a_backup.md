@@ -1,6 +1,6 @@
 # Restore the store from a backup
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/restore_drill.sh
 Applies-To: recovery, and the periodic rehearsal of it
 
