@@ -7,6 +7,41 @@
 
 use std::path::PathBuf;
 
+/// Where the platform's installation page says how to get a Linux host on each computer.
+const INSTALLATION: &str = "https://docs.bijectivelabs.dev/bijective/getting_started/installation";
+
+/// Why this operating system cannot bound a run and what to do instead, or `None` on Linux.
+/// Asked first, so a first command on Windows or macOS names the fix instead of failing later on a
+/// symptom of the same cause (no `python3`, no `systemd-run`).
+#[must_use]
+pub fn unsupported_host() -> Option<String> {
+    host_fix(std::env::consts::OS)
+}
+
+/// The refusal for `os`, as `std::env::consts::OS` names it. `None` only for Linux.
+#[must_use]
+pub fn host_fix(os: &str) -> Option<String> {
+    let (host, instead) = match os {
+        "linux" => return None,
+        "windows" => (
+            "Windows",
+            "Run it inside WSL 2, the Linux that ships with Windows: `wsl --install -d Ubuntu`, \
+             then follow the quick start inside Ubuntu.",
+        ),
+        "macos" => (
+            "macOS",
+            "Run it inside a Linux virtual machine with systemd (Ubuntu 24.04 or newer), then \
+             follow the quick start inside it.",
+        ),
+        _ => ("this operating system", "Run it on Linux."),
+    };
+    Some(format!(
+        "this is {host}. A strategy run is bounded with Linux cgroup v2 and namespaces, which \
+         {host} does not have, and a run that is not bounded is not the run a client gets. \
+         {instead} See {INSTALLATION}"
+    ))
+}
+
 /// The subtree runs are bounded under: the one named by `BIJECTIVE_CGROUP_ROOT`, or a scope of
 /// this session's own. An existing subtree is never adopted unnamed.
 pub fn bounded() -> Result<Bounded, String> {
@@ -137,3 +172,7 @@ fn beside_on_path(name: &str) -> Option<PathBuf> {
     let path = std::env::var_os("PATH")?;
     std::env::split_paths(&path).map(|dir| dir.join(name)).find(|c| c.is_file())
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/launch_tests.rs"]
+mod tests;

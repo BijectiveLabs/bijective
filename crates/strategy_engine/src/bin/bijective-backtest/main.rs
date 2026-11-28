@@ -114,6 +114,10 @@ fn parse_args() -> Result<Args, Stop> {
 }
 
 fn main() -> ExitCode {
+    if let Some(why) = bijective_strategy_engine::launch::unsupported_host() {
+        eprintln!("{PROGRAM}: {why}");
+        return ExitCode::from(2);
+    }
     let outcome = parse_args().and_then(|args| match args.scaffold.clone() {
         Some(path) => starter::scaffold(&path, args.store.as_deref()),
         None => run(args),

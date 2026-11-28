@@ -38,6 +38,10 @@ struct Market {
 }
 
 fn main() -> ExitCode {
+    if let Some(why) = bijective_strategy_engine::launch::unsupported_host() {
+        eprintln!("{PROGRAM}: {why}");
+        return ExitCode::from(2);
+    }
     match parse().and_then(|run| launch(&run)) {
         Ok(code) => code,
         Err(detail) => {
