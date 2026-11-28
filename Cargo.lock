@@ -85,7 +85,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "bijective-archive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-model",
@@ -97,11 +97,11 @@ dependencies = [
 
 [[package]]
 name = "bijective-authority"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-authority",
  "bijective-common",
@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-common"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -124,7 +124,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-console"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-archive",
  "bijective-authority",
@@ -148,7 +148,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-control-engine"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-authority",
  "bijective-common",
@@ -171,7 +171,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-data-engine"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-archive",
  "bijective-common",
@@ -188,11 +188,11 @@ dependencies = [
 
 [[package]]
 name = "bijective-decision-capture"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-deployment"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -202,7 +202,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-determinism"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -210,7 +210,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-evaluation"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -221,11 +221,11 @@ dependencies = [
 
 [[package]]
 name = "bijective-event-store"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-identity"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-authority",
  "ring",
@@ -233,29 +233,29 @@ dependencies = [
 
 [[package]]
 name = "bijective-lifecycle"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-model",
 ]
 
 [[package]]
 name = "bijective-limits"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-mcp"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde_json",
 ]
 
 [[package]]
 name = "bijective-model"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-ordering"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-control-engine",
  "bijective-event-store",
@@ -266,7 +266,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-paper-compare"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-control-engine",
  "bijective-event-store",
@@ -276,14 +276,14 @@ dependencies = [
 
 [[package]]
 name = "bijective-reconciliation"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-model",
 ]
 
 [[package]]
 name = "bijective-risk"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-event-store",
  "bijective-limits",
@@ -294,11 +294,11 @@ dependencies = [
 
 [[package]]
 name = "bijective-sandbox"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "bijective-secrets-broker"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "argon2",
  "chacha20poly1305",
@@ -307,7 +307,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-serialization"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-authority",
  "bijective-event-store",
@@ -316,7 +316,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-strategy-engine"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -329,7 +329,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-lifecycle",
@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-alpaca"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-lifecycle",
@@ -358,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-assurance"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -370,7 +370,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-bybit"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-event-store",
@@ -395,7 +395,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-hyperliquid"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-lifecycle",
@@ -417,7 +417,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-polymarket"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64 0.22.1",
  "bijective-common",
@@ -439,7 +439,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-registry"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bijective-model",
@@ -454,7 +454,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-simulated"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-lifecycle",
  "bijective-model",
@@ -464,7 +464,7 @@ dependencies = [
 
 [[package]]
 name = "bijective-venue-socket"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bijective-common",
  "bytes",
