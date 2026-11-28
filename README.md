@@ -1,14 +1,14 @@
 # <img src="assets/bijective_banner.svg" alt="Bijective" width="100%">
 
-[![Website](https://img.shields.io/badge/WEBSITE-111111?style=for-the-badge)](https://www.bijectivelabs.dev/bijective)
-[![Docs](https://img.shields.io/badge/DOCS-111111?style=for-the-badge)](https://docs.bijectivelabs.dev)
-[![Insight](https://img.shields.io/badge/INSIGHT-111111?style=for-the-badge)](https://www.bijectivelabs.dev/insights)
-
 [![CI](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml)
 [![Licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
 ![Rust 1.97.1](https://img.shields.io/badge/rust-1.97.1-orange?logo=rust)
 ![Python 3.12 to 3.14](https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab?logo=python&logoColor=white)
 [![Release](https://img.shields.io/github/v/release/BijectiveLabs/bijective?include_prereleases)](https://github.com/BijectiveLabs/bijective/releases)
+
+[![Website](https://img.shields.io/badge/WEBSITE-1f6feb?style=for-the-badge)](https://www.bijectivelabs.dev/bijective)
+[![Docs](https://img.shields.io/badge/DOCS-0e8a5f?style=for-the-badge)](https://docs.bijectivelabs.dev/bijective/)
+[![Insight](https://img.shields.io/badge/INSIGHT-7c3aed?style=for-the-badge)](https://www.bijectivelabs.dev/insights)
 
 | Branch   | Version | Build |
 | :------- | :------ | :---- |
@@ -24,7 +24,7 @@
 macOS and native Windows are not supported: the strategy sandbox is built on Linux namespaces and
 cgroup v2.
 
-- **Documentation**: [docs/](docs/index.md)
+- **Documentation**: [docs.bijectivelabs.dev/bijective](https://docs.bijectivelabs.dev/bijective/), built from [docs/](docs/index.md)
 - **Roadmap**: [ROADMAP.md](ROADMAP.md)
 - **Security**: [SECURITY.md](SECURITY.md)
 
