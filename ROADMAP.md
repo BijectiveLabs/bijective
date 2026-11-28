@@ -1,7 +1,7 @@
 # Roadmap
 
 Priorities change as the platform is built and operated. This page states direction, not dates.
-It reflects the tree as of 2026-11-27.
+It reflects the tree as of 2026-11-28.
 
 ## Built
 
@@ -47,23 +47,39 @@ It reflects the tree as of 2026-11-27.
 - An MCP server for research agents (decision 0020): an agent writes, runs and judges strategies
   through the research programs, with no route to an order
   ([connect a research agent](docs/how_to/connect_a_research_agent.md)).
+- An event store that refuses damage it once read as a crash: a check over each entry header
+  (format 2, decision 0021) and sealed segments held to their manifests.
+- Supply chain checks: a gate that refuses a locked dependency with a published vulnerability, and
+  signed build provenance for every release artefact.
+- A first run on any computer (decision 0022): Linux directly, Windows through WSL 2 and macOS
+  through a Linux virtual machine, with the first command naming the fix on a computer that cannot
+  bound a run ([installation](docs/getting_started/installation.md#on-your-computer)).
 - Thirty-four crates along the architectural layers, each with one reason to change.
 
 ## Next
 
-1. **Order feedback in a backtest.** The strategy told of its orders and fills at the position it
-   would be told in paper and live (decision 0015, stage 2).
-2. **Packages on registries.** The strategy library on PyPI, and a `bijective` package that installs
+In this order. The venues in item 8 start once items 1 to 7 are built and in production.
+
+1. **Packages on registries.** The strategy library on PyPI, and a `bijective` package that installs
    the programs, so a first run needs neither a build nor a download by hand.
-3. **More of your own data.** Trades, funding, mark prices, open interest, Parquet input and
-   OHLCV bars from a client's files (decision 0016, stage 2).
-4. **Venues.** Exercise Hyperliquid and Polymarket execution end to end against the venue, then
-   add OKX, Binance and Interactive Brokers as native adapters.
-5. **Market state.** A point-in-time, cross-venue market state, versioned and auditable, that
+2. **A node in containers.** The control engine in the composition, a Python runtime in the image
+   so it runs client strategies, and the cause of a lost venue link stated in readiness.
+3. **Console.** Analytics per day and by concentration, an execution heatmap by venue and hour, the
+   lifecycle and accounts views, and number and date formats that follow the operator's locale.
+4. **Hyperliquid and Polymarket against the venue.** Their execution and venue evidence exercised
+   end to end, as Bybit and Alpaca are.
+5. **Replay of a paper or live run** from its record, producing the same control stream.
+6. **Export of everything a client owns** (data, configuration and audit trail) through the open
+   core, restorable on another host.
+7. **Order feedback in a backtest**, and **more of your own data**: the strategy told of its fills
+   at the position paper and live would tell it (decision 0015, stage 2), and trades, funding, mark
+   prices, open interest, Parquet input and bars from a client's files (decision 0016, stage 2).
+8. **Venues.** Binance and Kalshi as native adapters, then OKX and Interactive Brokers.
+9. **Market state.** A point-in-time, cross-venue market state, versioned and auditable, that
    strategies, the risk engine and models can consume in the same form in backtest and live.
-6. **Exchange calendars** for venues that trade in sessions, so simulated and backtest runs keep
-   the same hours as the venue.
-7. **Proactive rate limiting** per venue, as configuration rather than reaction.
+10. **Exchange calendars** for venues that trade in sessions, so simulated and backtest runs keep
+    the same hours as the venue.
+11. **Proactive rate limiting** per venue, as configuration rather than reaction.
 
 ## Scope
 

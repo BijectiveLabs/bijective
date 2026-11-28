@@ -22,8 +22,8 @@ virtual machine) rather than reimplementing isolation for each operating system.
 1. **The bound is not relaxed for any computer.** A run without it is not the run a client gets,
    and a verdict from it would look like every other. There is no unbounded mode.
 2. **On Windows and macOS the platform runs inside a Linux.** On Windows that is WSL 2, one
-   command (`wsl --install -d Ubuntu`). On macOS it is a virtual machine running Ubuntu 24.04 or
-   newer with systemd. Inside it, nothing about the platform differs from a server, so a first run
+   command (`wsl --install -d Ubuntu`). On macOS it is an Ubuntu virtual machine, started with
+   Lima (`brew install lima`, `limactl start`). Inside it, nothing about the platform differs from a server, so a first run
    there moves to a VPS unchanged.
 3. **The first command says so.** `bijective-backtest` and `bijective-paper` refuse to start on a
    computer that is not Linux, before any other check, name the computer, give its one fix, and
@@ -33,7 +33,7 @@ virtual machine) rather than reimplementing isolation for each operating system.
 
 ## Shorter path, and what a longer one would add
 
-This is the shortest: one check at the start of two programs and one page. A longer path would add
-an Arm artefact (Macs with Apple silicon now build from source), a measured macOS virtual machine
-recipe, and a container image that carries Python and runs the sandbox inside it. Each is added
-when it is measured, not before.
+This is the shortest: one check at the start of two programs, one page, and an artefact for each
+architecture, so a Mac with Apple silicon runs the release without a build. A longer path would add a
+container image that carries Python and runs the sandbox inside it. It is added when it is
+measured, not before.

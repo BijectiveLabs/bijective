@@ -27,7 +27,7 @@ runs inside a Linux on them, the way container and cluster tools do. On Windows 
 |---|---|---|
 | Linux with systemd 250 or newer | the host itself | Measured |
 | Windows 10 or 11 | WSL 2: `wsl --install -d Ubuntu` in a Windows terminal, then open Ubuntu | Measured on Windows 11 in WSL 2 Ubuntu with systemd (2026-11-28) |
-| macOS | a virtual machine running Ubuntu 24.04 or newer with systemd | Not yet measured by this project |
+| macOS | a Linux virtual machine: `brew install lima`, `limactl start`, then `lima` for its shell | Guide below |
 
 On Windows, check that the Ubuntu runs systemd: `ps -p 1 -o comm=` answers `systemd`. Microsoft
 documents systemd as the default for the current Ubuntu that `wsl --install` installs; another
@@ -35,24 +35,37 @@ distribution, or an older one, enables it as
 [Run a node on a Windows workstation](../how_to/run_a_node_on_a_windows_workstation.md) step 1
 describes.
 
+On macOS, [Lima](https://lima-vm.io) (Apache-2.0) starts an Ubuntu virtual machine with one
+command and opens a shell in it:
+
+```bash
+brew install lima
+limactl start
+lima
+```
+
+The machine has the architecture of the Mac: `aarch64` on Apple silicon, `x86_64` on Intel.
+Everything below runs inside it.
+
 Inside that Linux, the release artefact is the shortest start: no Rust toolchain and no build.
 Ubuntu ships `python3`, which strategies need.
 
 ```bash
 v=0.1.1
+a=$(uname -m)
 base=https://github.com/BijectiveLabs/bijective/releases/download/v$v
-curl -fsSLO $base/bijective-$v-linux-x86_64.tar.gz
-curl -fsSLO $base/bijective-$v-linux-x86_64.tar.gz.sha256
-sha256sum -c bijective-$v-linux-x86_64.tar.gz.sha256
-tar xzf bijective-$v-linux-x86_64.tar.gz
-export PATH="$PWD/bijective-$v-linux-x86_64/bin:$PATH"
+curl -fsSLO $base/bijective-$v-linux-$a.tar.gz
+curl -fsSLO $base/bijective-$v-linux-$a.tar.gz.sha256
+sha256sum -c bijective-$v-linux-$a.tar.gz.sha256
+tar xzf bijective-$v-linux-$a.tar.gz
+export PATH="$PWD/bijective-$v-linux-$a/bin:$PATH"
 ```
 
 Then follow the [Quickstart](quickstart.md). Measured 2026-11-28 in WSL 2 on Windows 11 with the
 0.1.1 artefact: `bijective-backtest --new alpha.py` and `bijective-backtest alpha.py` completed in
-1.6 seconds, each run bounded in a scope the command made itself. The artefact is built for
-x86_64. A machine with an Arm processor, such as a Mac with Apple silicon, builds from source
-below until an Arm artefact is released.
+1.6 seconds, each run bounded in a scope the command made itself. Releases after 0.1.1 publish an
+artefact for `x86_64` and for `aarch64`. 0.1.1 has the `x86_64` one only, so an Arm machine on 0.1.1
+builds from source below.
 
 ## Build
 

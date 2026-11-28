@@ -19,7 +19,7 @@ refused - a manifest that only checks what it names permits anything to be added
    that script's own assumptions.
 
 1. Where the archive was downloaded, before it is copied anywhere, check that the release workflow
-   built it: `gh attestation verify bijective-<version>-linux-x86_64.tar.gz --repo BijectiveLabs/bijective`.
+   built it: `gh attestation verify bijective-<version>-linux-<arch>.tar.gz --repo BijectiveLabs/bijective`, where `<arch>` is `x86_64` or `aarch64`.
    The release workflow signs build provenance for the archive and the strategy library from the
    first release after 0.1.1. 0.1.1 and earlier carry none, so for them this step does not apply.
    Copy the release artefact to the host. **Nothing is fetched at install time** - no package

@@ -40,6 +40,12 @@ at `ghcr.io/bijectivelabs/bijective`. Verify an artefact before installing it wi
   without its payload. Format 1 segments are still read. A stream moves to format 2 at its next
   segment: the active format 1 segment is sealed as it stands.
 
+- **The strategy library on PyPI**, by trusted publishing from the release workflow: no token is
+  stored. Off until the publisher is registered on PyPI and the repository variable
+  `PYPI_PUBLISHER` is `registered`; until then the library is attached to each release as before.
+- **An artefact for Arm.** Releases publish `bijective-<version>-linux-aarch64` beside the
+  `x86_64` one, each built natively, so a Mac with Apple silicon runs a release in its Linux virtual
+  machine without a build.
 - **A first command on Windows or macOS names the fix.** `bijective-backtest` and `bijective-paper`
   refuse to start on a computer without Linux cgroup v2 and say how to get a Linux there (WSL 2 on
   Windows), instead of failing later on a symptom such as a missing `python3`
