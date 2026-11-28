@@ -18,7 +18,11 @@ refused - a manifest that only checks what it names permits anything to be added
    the same code walking the same tree - a manifest written by a separate script agrees with
    that script's own assumptions.
 
-1. Copy the release artefact to the host. **Nothing is fetched at install time** - no package
+1. Where the archive was downloaded, before it is copied anywhere, check that the release workflow
+   built it: `gh attestation verify bijective-<version>-linux-x86_64.tar.gz --repo BijectiveLabs/bijective`.
+   The release workflow signs build provenance for the archive and the strategy library from the
+   first release after 0.1.1. 0.1.1 and earlier carry none, so for them this step does not apply.
+   Copy the release artefact to the host. **Nothing is fetched at install time** - no package
    index, no image registry, no download.
 2. Run `bijective-deploy verify-artefact <artefact-dir>`.
 3. A pass reports how many files were verified. **Any failure stops the install**; it is not a

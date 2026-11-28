@@ -220,5 +220,7 @@ runtime:
   plain writes under `/sys/fs/cgroup`.
 
 The supervisor must itself run inside the delegated subtree. In production its systemd unit carries
-`Delegate=yes`, which the deployment kit emits. See
+`Delegate=yes`, which the deployment kit emits. Its start-up probe moves a throwaway process into
+a cgroup it creates, as it moves every run, so a supervisor started outside the subtree refuses to
+start with the reason instead of starting and ending every run with exit 111. See
 [Bound a strategy run](../how_to/verify_an_agent_run_can_be_bounded.md).

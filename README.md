@@ -106,7 +106,7 @@ Early development: version 0.1.1, and interfaces will change before 1.0. Status 
 ## Engineering practices
 
 What an operator relies on is checked by a machine on every push, not by a reviewer's memory. The
-gate runner (`scripts/ci/run_gates.sh`) runs 41 gates, and a gate that cannot run is a failure. The
+gate runner (`scripts/ci/run_gates.sh`) runs 42 gates, and a gate that cannot run is a failure. The
 full list is in [Quality gates](docs/developer_guide/ci_gates.md). Among them:
 
 - **The order path is closed.** An order cannot be submitted without a clearance that only the risk

@@ -3,7 +3,7 @@
 Generated from the dependency attestation. Do not edit by hand - the build
 check regenerates this file and refuses a difference.
 
-284 package(s).
+311 package(s).
 
 ## Packages
 
@@ -16,6 +16,7 @@ check regenerates this file and refuses a difference.
 | atomic-waker | 1.1.2 | Apache-2.0 OR MIT | MIT |
 | autocfg | 1.5.1 | Apache-2.0 OR MIT | MIT |
 | base16ct | 0.2.0 | Apache-2.0 OR MIT | MIT |
+| base16ct | 1.0.0 | Apache-2.0 OR MIT | MIT |
 | base64 | 0.22.1 | MIT OR Apache-2.0 | MIT |
 | base64 | 0.23.1 | MIT OR Apache-2.0 | MIT |
 | base64ct | 1.8.3 | Apache-2.0 OR MIT | MIT |
@@ -29,6 +30,7 @@ check regenerates this file and refuses a difference.
 | cesu8 | 1.1.0 | Apache-2.0/MIT | MIT |
 | cfg-if | 1.0.4 | MIT OR Apache-2.0 | MIT |
 | chacha20 | 0.10.1 | MIT OR Apache-2.0 | MIT |
+| chacha20 | 0.10.2 | MIT OR Apache-2.0 | MIT |
 | chacha20poly1305 | 0.11.0 | Apache-2.0 OR MIT | MIT |
 | chrono | 0.4.45 | MIT OR Apache-2.0 | MIT |
 | cipher | 0.5.2 | MIT OR Apache-2.0 | MIT |
@@ -40,29 +42,37 @@ check regenerates this file and refuses a difference.
 | const-random-macro | 0.1.16 | MIT OR Apache-2.0 | MIT |
 | core-foundation | 0.10.1 | MIT OR Apache-2.0 | MIT |
 | core-foundation-sys | 0.8.7 | MIT OR Apache-2.0 | MIT |
+| cpubits | 0.1.1 | MIT OR Apache-2.0 | MIT |
 | cpufeatures | 0.2.17 | MIT OR Apache-2.0 | MIT |
 | cpufeatures | 0.3.0 | MIT OR Apache-2.0 | MIT |
 | crunchy | 0.2.4 | MIT | MIT |
 | crypto-bigint | 0.5.5 | Apache-2.0 OR MIT | MIT |
+| crypto-bigint | 0.7.11 | Apache-2.0 OR MIT | MIT |
 | crypto-common | 0.1.7 | MIT OR Apache-2.0 | MIT |
 | crypto-common | 0.2.2 | MIT OR Apache-2.0 | MIT |
 | ctutils | 0.4.2 | Apache-2.0 OR MIT | MIT |
+| ctutils | 0.4.8 | Apache-2.0 OR MIT | MIT |
 | der | 0.7.10 | Apache-2.0 OR MIT | MIT |
+| der | 0.8.3 | Apache-2.0 OR MIT | MIT |
 | digest | 0.10.7 | MIT OR Apache-2.0 | MIT |
 | digest | 0.11.3 | MIT OR Apache-2.0 | MIT |
 | displaydoc | 0.2.7 | MIT OR Apache-2.0 | MIT |
 | ecdsa | 0.16.9 | Apache-2.0 OR MIT | MIT |
+| ecdsa | 0.17.0 | Apache-2.0 OR MIT | MIT |
 | elliptic-curve | 0.13.8 | Apache-2.0 OR MIT | MIT |
+| elliptic-curve | 0.14.3 | Apache-2.0 OR MIT | MIT |
 | equivalent | 1.0.2 | Apache-2.0 OR MIT | MIT |
 | errno | 0.3.14 | MIT OR Apache-2.0 | MIT |
 | fastrand | 2.5.0 | Apache-2.0 OR MIT | MIT |
 | ff | 0.13.1 | MIT/Apache-2.0 | MIT |
+| ff | 0.14.0 | MIT/Apache-2.0 | MIT |
 | find-msvc-tools | 0.1.11 | MIT OR Apache-2.0 | MIT |
 | flate2 | 1.1.11 | MIT OR Apache-2.0 | MIT |
 | fnv | 1.0.7 | Apache-2.0 / MIT | MIT |
 | foreign-types | 0.3.2 | MIT/Apache-2.0 | MIT |
 | foreign-types-shared | 0.1.1 | MIT/Apache-2.0 | MIT |
 | form_urlencoded | 1.2.2 | MIT OR Apache-2.0 | MIT |
+| form_urlencoded | 1.2.3 | MIT OR Apache-2.0 | MIT |
 | futures-channel | 0.3.34 | MIT OR Apache-2.0 | MIT |
 | futures-core | 0.3.34 | MIT OR Apache-2.0 | MIT |
 | futures-macro | 0.3.34 | MIT OR Apache-2.0 | MIT |
@@ -74,6 +84,7 @@ check regenerates this file and refuses a difference.
 | getrandom | 0.3.4 | MIT OR Apache-2.0 | MIT |
 | getrandom | 0.4.3 | MIT OR Apache-2.0 | MIT |
 | group | 0.13.0 | MIT/Apache-2.0 | MIT |
+| group | 0.14.0 | MIT/Apache-2.0 | MIT |
 | h2 | 0.4.18 | MIT | MIT |
 | h2 | 0.4.19 | MIT | MIT |
 | half | 2.7.1 | MIT OR Apache-2.0 | MIT |
@@ -114,6 +125,7 @@ check regenerates this file and refuses a difference.
 | jobserver | 0.1.35 | MIT OR Apache-2.0 | MIT |
 | js-sys | 0.3.104 | MIT OR Apache-2.0 | MIT |
 | k256 | 0.13.4 | Apache-2.0 OR MIT | MIT |
+| k256 | 0.14.0 | Apache-2.0 OR MIT | MIT |
 | keccak | 0.1.6 | Apache-2.0 OR MIT | MIT |
 | libc | 0.2.189 | MIT OR Apache-2.0 | MIT |
 | libm | 0.2.16 | MIT | MIT |
@@ -137,14 +149,18 @@ check regenerates this file and refuses a difference.
 | parking_lot | 0.12.5 | MIT OR Apache-2.0 | MIT |
 | parking_lot_core | 0.9.12 | MIT OR Apache-2.0 | MIT |
 | parquet | 60.1.0 | Apache-2.0 | Apache-2.0 |
+| parquet | 60.2.0 | Apache-2.0 | Apache-2.0 |
 | password-hash | 0.5.0 | MIT OR Apache-2.0 | MIT |
 | percent-encoding | 2.3.2 | MIT OR Apache-2.0 | MIT |
 | pin-project-lite | 0.2.17 | Apache-2.0 OR MIT | MIT |
 | pkcs8 | 0.10.2 | Apache-2.0 OR MIT | MIT |
+| pkcs8 | 0.11.0 | Apache-2.0 OR MIT | MIT |
 | pkg-config | 0.3.34 | MIT OR Apache-2.0 | MIT |
 | poly1305 | 0.9.1 | Apache-2.0 OR MIT | MIT |
 | portable-atomic | 1.15.0 | Apache-2.0 OR MIT | MIT |
 | potential_utf | 0.1.6 | Unicode-3.0 | Unicode-3.0 |
+| primefield | 0.14.0 | Apache-2.0 OR MIT | MIT |
+| primeorder | 0.14.0 | Apache-2.0 OR MIT | MIT |
 | proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | MIT |
 | quanta | 0.13.0 | MIT | MIT |
 | quote | 1.0.47 | MIT OR Apache-2.0 | MIT |
@@ -156,11 +172,13 @@ check regenerates this file and refuses a difference.
 | redox_syscall | 0.5.18 | MIT | MIT |
 | reqwest | 0.13.4 | MIT OR Apache-2.0 | MIT |
 | rfc6979 | 0.4.0 | Apache-2.0 OR MIT | MIT |
+| rfc6979 | 0.6.0 | Apache-2.0 OR MIT | MIT |
 | ring | 0.17.14 | Apache-2.0 AND ISC | Apache-2.0, ISC |
 | rmp | 0.8.15 | MIT | MIT |
 | rustc_version | 0.4.1 | MIT OR Apache-2.0 | MIT |
 | rustix | 1.1.4 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | MIT |
 | rustls | 0.23.43 | Apache-2.0 OR ISC OR MIT | MIT |
+| rustls | 0.23.46 | Apache-2.0 OR ISC OR MIT | MIT |
 | rustls-native-certs | 0.8.4 | Apache-2.0 OR ISC OR MIT | MIT |
 | rustls-pki-types | 1.15.1 | MIT OR Apache-2.0 | MIT |
 | rustls-platform-verifier | 0.6.2 | MIT OR Apache-2.0 | MIT |
@@ -168,11 +186,13 @@ check regenerates this file and refuses a difference.
 | rustls-platform-verifier-android | 0.1.1 | MIT OR Apache-2.0 | MIT |
 | rustls-webpki | 0.103.14 | ISC | ISC |
 | rustls-webpki | 0.103.15 | ISC | ISC |
+| rustls-webpki | 0.103.17 | ISC | ISC |
 | rustversion | 1.0.23 | MIT OR Apache-2.0 | MIT |
 | same-file | 1.0.6 | Unlicense/MIT | MIT |
 | schannel | 0.1.29 | MIT | MIT |
 | scopeguard | 1.2.0 | MIT OR Apache-2.0 | MIT |
 | sec1 | 0.7.3 | Apache-2.0 OR MIT | MIT |
+| sec1 | 0.8.1 | Apache-2.0 OR MIT | MIT |
 | security-framework | 3.7.0 | MIT OR Apache-2.0 | MIT |
 | security-framework-sys | 2.17.0 | MIT OR Apache-2.0 | MIT |
 | semver | 1.0.28 | MIT OR Apache-2.0 | MIT |
@@ -182,6 +202,7 @@ check regenerates this file and refuses a difference.
 | serde_derive | 1.0.229 | MIT OR Apache-2.0 | MIT |
 | serde_json | 1.0.151 | MIT OR Apache-2.0 | MIT |
 | serde_spanned | 1.1.1 | MIT OR Apache-2.0 | MIT |
+| serdect | 0.4.3 | Apache-2.0 OR MIT | MIT |
 | sha1 | 0.11.0 | MIT OR Apache-2.0 | MIT |
 | sha2 | 0.10.9 | MIT OR Apache-2.0 | MIT |
 | sha2 | 0.11.0 | MIT OR Apache-2.0 | MIT |
@@ -189,6 +210,7 @@ check regenerates this file and refuses a difference.
 | shlex | 2.0.1 | MIT OR Apache-2.0 | MIT |
 | signal-hook-registry | 1.4.8 | MIT OR Apache-2.0 | MIT |
 | signature | 2.2.0 | Apache-2.0 OR MIT | MIT |
+| signature | 3.0.0 | Apache-2.0 OR MIT | MIT |
 | simd_cesu8 | 1.2.0 | Apache-2.0 OR MIT | MIT |
 | simdutf8 | 0.1.5 | MIT OR Apache-2.0 | MIT |
 | slab | 0.4.12 | MIT | MIT |
@@ -196,6 +218,7 @@ check regenerates this file and refuses a difference.
 | socket2 | 0.6.5 | MIT OR Apache-2.0 | MIT |
 | sockudo-ws | 3.1.1 | MIT | MIT |
 | spki | 0.7.3 | Apache-2.0 OR MIT | MIT |
+| spki | 0.8.1 | Apache-2.0 OR MIT | MIT |
 | stable_deref_trait | 1.2.1 | MIT OR Apache-2.0 | MIT |
 | subtle | 2.6.1 | BSD-3-Clause | BSD-3-Clause |
 | syn | 2.0.119 | MIT OR Apache-2.0 | MIT |
@@ -211,6 +234,7 @@ check regenerates this file and refuses a difference.
 | tiny-keccak | 2.0.2 | CC0-1.0 | CC0-1.0 |
 | tinystr | 0.8.4 | Unicode-3.0 | Unicode-3.0 |
 | tokio | 1.53.1 | MIT | MIT |
+| tokio | 1.54.1 | MIT | MIT |
 | tokio-macros | 2.7.2 | MIT | MIT |
 | tokio-native-tls | 0.3.1 | MIT | MIT |
 | tokio-rustls | 0.26.4 | MIT OR Apache-2.0 | MIT |
@@ -232,6 +256,7 @@ check regenerates this file and refuses a difference.
 | universal-hash | 0.6.1 | MIT OR Apache-2.0 | MIT |
 | untrusted | 0.9.0 | ISC | ISC |
 | url | 2.5.8 | MIT OR Apache-2.0 | MIT |
+| url | 2.5.9 | MIT OR Apache-2.0 | MIT |
 | utf8_iter | 1.0.4 | Apache-2.0 OR MIT | MIT |
 | vcpkg | 0.2.15 | MIT/Apache-2.0 | MIT |
 | version_check | 0.9.5 | MIT/Apache-2.0 | MIT |
@@ -246,6 +271,7 @@ check regenerates this file and refuses a difference.
 | wasm-bindgen-macro-support | 0.2.127 | MIT OR Apache-2.0 | MIT |
 | wasm-bindgen-shared | 0.2.127 | MIT OR Apache-2.0 | MIT |
 | web-sys | 0.3.104 | MIT OR Apache-2.0 | MIT |
+| webpki-root-certs | 1.0.12 | CDLA-Permissive-2.0 | CDLA-Permissive-2.0 |
 | webpki-root-certs | 1.0.9 | CDLA-Permissive-2.0 | CDLA-Permissive-2.0 |
 | winapi-util | 0.1.11 | Unlicense OR MIT | MIT |
 | windows-core | 0.62.2 | MIT OR Apache-2.0 | MIT |
@@ -276,6 +302,7 @@ check regenerates this file and refuses a difference.
 | windows_x86_64_msvc | 0.52.6 | MIT OR Apache-2.0 | MIT |
 | winnow | 1.0.4 | MIT | MIT |
 | wit-bindgen | 0.57.1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | MIT |
+| wnaf | 0.14.1 | Apache-2.0 OR MIT | MIT |
 | writeable | 0.6.4 | Unicode-3.0 | Unicode-3.0 |
 | yoke | 0.8.3 | Unicode-3.0 | Unicode-3.0 |
 | yoke-derive | 0.8.2 | Unicode-3.0 | Unicode-3.0 |

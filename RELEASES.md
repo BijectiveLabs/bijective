@@ -19,6 +19,22 @@ at `ghcr.io/bijectivelabs/bijective`. Verify an artefact before installing it wi
   segment is held to its manifest, so one cut short at an entry boundary is `Corrupt`
   (`ManifestMismatch`). The restore drill proves both refusals at fixed offsets.
 
+- **The supervisor refuses a subtree it cannot move a run into.** Its probe wrote nothing to
+  `cgroup.procs`, which passes wherever the file opens. Moving a process also needs write access
+  to the common ancestor, which a `su` or `ssh` session under systemd lacks, and every run then
+  ended with exit 111 and no reason. The probe now moves a process in, as a run is moved.
+
+- **Release provenance.** The release workflow signs build provenance for the archive and the
+  strategy library before it publishes them, checked with `gh attestation verify`
+  ([verify a release](docs/how_to/verify_a_release.md)). Issue forms and a code owners file are
+  added to the repository.
+
+- **Dependencies with published vulnerabilities are updated**, and a new gate, `Dependency
+  advisories`, refuses a lock that holds one. `rustls` 0.23.46, `rustls-webpki` 0.103.17,
+  `webpki-root-certs` 1.0.12, `url` 2.5.9, `ctutils` 0.4.8, `tokio` 1.54.1, `parquet` 60.2.0, and
+  `k256` 0.14 for Hyperliquid and Polymarket signing, which leaves `crypto-bigint` 0.5 and its
+  timing advisory. Signatures are byte for byte the same: the Polymarket reference vectors pass.
+
 Operator action: none. A store that verified clean before and holds no such damage verifies clean
 now. Run `bijective-deploy restore-drill` on the latest backup to confirm.
 

@@ -46,6 +46,7 @@ Several drills need a Linux host with a delegated cgroup v2 subtree; see
 | **Venue names** | No venue is named above the adapter contract |
 | **Order attribution** | No adapter request carries a broker id, referral, channel code or builder fee, and every request header is on the allow-list |
 | **Dependency licences** | Every third-party package in the lock is attested and on the allow-list |
+| **Dependency advisories** | No locked package has a published RustSec vulnerability (`cargo-audit`). Unmaintained, unsound and yanked notices are reported, not refused |
 | **Third-party notices** | `THIRD_PARTY_LICENSES.md` matches what the attestation generates |
 | **Source notices** | Every tracked `.rs`, `.py` and `.sh` file outside `pro/` carries the SPDX licence line and the copyright notice in its first four lines |
 | **Pro boundary** | No file of the open core names `pro/` (only the workspace manifest, its lock and `areas.txt` list a Bijective Pro crate, so every gate judges it; the export removes those lines), so the public export drops it whole, and every commercial source carries the proprietary notice and no Apache-2.0 line |

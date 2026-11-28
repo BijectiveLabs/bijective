@@ -37,6 +37,7 @@ at start. Measured 2026-11-27 on WSL 2 with systemd 255: three `PASS` lines.
 | Three `PASS` lines | The bound is in force, the cgroup is removed with the run, limits are per run |
 | `NOT VERIFIED` | No subtree was named. The drill will not guess one; limits are unproven until it runs |
 | `FAIL ... exit 111` | The run could not enter its cgroup. The drill is not inside the delegated tree |
+| Supervisor refuses: `a process could not be moved into ...` | The same cause, found at start: the supervisor moves a probe process in as it would a run. Start it from inside the delegated tree, not from a `su` or `ssh` session, which systemd places in a scope of its own |
 | `FAIL ... the bound was not in force` | The subtree is not a cgroup, or the memory controller is not delegated |
 
 **A `NOT VERIFIED` is not a pass.** The isolation half of the sandbox is a change gate and runs
