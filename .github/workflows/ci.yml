@@ -69,6 +69,10 @@ jobs:
             python3 -m pip install --quiet -e "${pkg}[test]"
           done
 
+      # Pinned, so a new release cannot change what the advisories gate accepts between two runs.
+      - name: Install the advisory checker
+        run: cargo install --locked cargo-audit --version 0.23.0
+
       - name: Run the change gates
         run: bash scripts/ci/run_gates.sh
 

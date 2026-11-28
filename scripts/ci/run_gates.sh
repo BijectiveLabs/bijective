@@ -389,6 +389,48 @@ PYEOF
     fi
 }
 
+gate_dependency_advisories() {
+    # A dependency with a published advisory against its locked version is refused, read from the
+    # RustSec database by cargo-audit. Unmaintained and unsound notices are reported, not refused:
+    # they carry no exploit, and one without a fixed release would hold every change hostage.
+    if ! cargo audit --version >/dev/null 2>&1; then
+        record "NOT RUN" "Dependency advisories" "cargo-audit is not installed (cargo install --locked cargo-audit)"
+        return
+    fi
+    local out
+    out="$(cd "$CORE" && cargo audit --json 2>/dev/null)"
+    local summary
+    summary="$(printf '%s' "$out" | "$PYTHON" -c '
+import json, sys
+try:
+    report = json.load(sys.stdin)
+except ValueError:
+    print("UNREAD")
+    sys.exit()
+print("COUNT\t%d" % report["lockfile"]["dependency-count"])
+for v in report["vulnerabilities"]["list"]:
+    print("VULN\t%s %s %s" % (v["advisory"]["id"], v["package"]["name"], v["package"]["version"]))
+for kind, found in report["warnings"].items():
+    for w in found:
+        print("WARN\t%s %s %s" % (kind, w["package"]["name"], w["package"]["version"]))
+')"
+    if printf '%s' "$summary" | grep -q '^UNREAD'; then
+        record "FAIL" "Dependency advisories" "cargo-audit gave no report: the advisory database could not be read"
+        return
+    fi
+    local count vulns warns
+    count="$(printf '%s\n' "$summary" | awk -F'\t' '$1=="COUNT"{print $2}')"
+    vulns="$(printf '%s\n' "$summary" | awk -F'\t' '$1=="VULN"{print $2}')"
+    warns="$(printf '%s\n' "$summary" | grep -c '^WARN' || true)"
+    if [ -n "$vulns" ]; then
+        record "FAIL" "Dependency advisories" "$(printf '%s\n' "$vulns" | wc -l) locked package(s) with a published vulnerability"
+        printf '%s\n' "$vulns" | head -10 | sed 's/^/        /'
+    else
+        record "PASS" "Dependency advisories" "no locked package has a published vulnerability; ${warns} notice(s) reported" "${count:-0}"
+        printf '%s\n' "$summary" | awk -F'\t' '$1=="WARN"{print "        notice: "$2}'
+    fi
+}
+
 gate_agent_environment() {
     # The platform architecture: the agent environment holds no credential, opens no venue connection and has
     # no route to the order path except emitting a signal. Checked on the dependency graph, where it
@@ -1950,6 +1992,7 @@ gate_no_float
 gate_venue_names
 gate_order_attribution
 gate_dependency_licences
+gate_dependency_advisories
 gate_third_party_notices
 gate_source_notices
 gate_pro_boundary

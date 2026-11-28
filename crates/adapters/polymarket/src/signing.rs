@@ -159,7 +159,6 @@ pub fn order_digest(order: &UnsignedOrder, exchange: Exchange) -> [u8; 32] {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SigningError {
     KeyRefused,
-    NotSigned,
     /// The API secret is not the base64 the venue issues.
     SecretRefused,
 }
@@ -168,7 +167,6 @@ impl core::fmt::Display for SigningError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::KeyRefused => write!(f, "the wallet key is not valid for this curve"),
-            Self::NotSigned => write!(f, "the digest could not be signed"),
             Self::SecretRefused => write!(f, "the API secret is not base64"),
         }
     }
@@ -189,7 +187,7 @@ impl Signer {
     /// The address the key controls: the last twenty bytes of the public key's hash.
     #[must_use]
     pub fn address(&self) -> [u8; 20] {
-        let point = VerifyingKey::from(&self.key).to_encoded_point(false);
+        let point = VerifyingKey::from(&self.key).to_sec1_point(false);
         let hash = keccak256(&point.as_bytes()[1..]);
         let mut out = [0u8; 20];
         out.copy_from_slice(&hash[12..]);
@@ -203,8 +201,7 @@ impl Signer {
     }
 
     fn signature_bytes(&self, digest: &[u8; 32]) -> Result<Vec<u8>, SigningError> {
-        let (signature, recovery) =
-            self.key.sign_prehash_recoverable(digest).map_err(|_| SigningError::NotSigned)?;
+        let (signature, recovery) = self.key.sign_prehash_recoverable(digest);
         let mut bytes = signature.to_bytes().to_vec();
         bytes.push(27 + recovery.to_byte());
         Ok(bytes)

@@ -90,14 +90,12 @@ pub struct Signed {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SigningError {
     KeyRefused,
-    NotSigned,
 }
 
 impl core::fmt::Display for SigningError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             SigningError::KeyRefused => write!(f, "the wallet key is not valid for this curve"),
-            SigningError::NotSigned => write!(f, "the digest could not be signed"),
         }
     }
 }
@@ -118,8 +116,7 @@ impl Signer {
 
     /// Deterministic nonce from key and message: the key-leaking reuse of one nonce is unreachable.
     pub fn sign(&self, digest: &[u8; 32]) -> Result<Signed, SigningError> {
-        let (signature, recovery) =
-            self.key.sign_prehash_recoverable(digest).map_err(|_| SigningError::NotSigned)?;
+        let (signature, recovery) = self.key.sign_prehash_recoverable(digest);
         let bytes = signature.to_bytes();
         let mut r = [0u8; 32];
         let mut s = [0u8; 32];

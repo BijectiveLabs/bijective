@@ -21,7 +21,7 @@ path = "src/main.rs"
 bijective-model = { path = "../model" }
 bijective-common = { path = "../common" }
 # Column API only: the default feature set brings the arrow closure, which no reader here needs.
-parquet = { version = "=60.1.0", default-features = false, features = ["zstd"] }
+parquet = { version = "=60.2.0", default-features = false, features = ["zstd"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.11"

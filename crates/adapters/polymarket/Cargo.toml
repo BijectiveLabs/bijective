@@ -24,7 +24,7 @@ bijective-venue-socket = { path = "../socket" }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
 futures-util = "0.3"
 # The feature sets match the closure attested for the other adapters; a wider set is unattested.
-k256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+k256 = { version = "0.14", default-features = false, features = ["ecdsa", "std"] }
 sha3 = "0.10"
 hmac = "0.13"
 sha2 = "0.11"

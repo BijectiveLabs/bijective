@@ -23,7 +23,7 @@ bijective-venue-socket = { path = "../socket" }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
 futures-util = "0.3"
 # The feature set must match the attested closure; a wider set is unattested.
-k256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+k256 = { version = "0.14", default-features = false, features = ["ecdsa", "std"] }
 sha3 = "0.10"
 # Primitive writers only, no derive: field order changes every signature, and the venue
 # reports a bad signature as a missing account.

@@ -21,7 +21,7 @@ fn hex(bytes: &[u8]) -> String {
 
 /// Derived here: in the module it would be exercised only by tests, which gate 31 refuses.
 fn address_of(key: &VerifyingKey) -> String {
-    let point = key.to_encoded_point(false);
+    let point = key.to_sec1_point(false);
     hex(&keccak256(&point.as_bytes()[1..])[12..])
 }
 
@@ -134,7 +134,6 @@ fn a_signature_recovers_the_address_that_made_it() {
 fn a_key_the_curve_refuses_is_refused_here() {
     match Signer::from_secret(&[0u8; 32]) {
         Err(SigningError::KeyRefused) => {}
-        Err(other) => panic!("refused for the wrong reason: {other}"),
         Ok(_) => panic!("a zero scalar was accepted as a wallet key"),
     }
 }
