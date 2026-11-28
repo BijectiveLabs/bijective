@@ -35,7 +35,19 @@ at `ghcr.io/bijectivelabs/bijective`. Verify an artefact before installing it wi
   `k256` 0.14 for Hyperliquid and Polymarket signing, which leaves `crypto-bigint` 0.5 and its
   timing advisory. Signatures are byte for byte the same: the Polymarket reference vectors pass.
 
-Operator action: none. A store that verified clean before and holds no such damage verifies clean
+- **Event store format 2** (decision 0021): each entry header carries a check over its marker,
+  length and position, so a damaged length is refused (`HeaderCheck`) wherever it lies, with or
+  without its payload. Format 1 segments are still read. A stream moves to format 2 at its next
+  segment: the active format 1 segment is sealed as it stands.
+
+- **A first command on Windows or macOS names the fix.** `bijective-backtest` and `bijective-paper`
+  refuse to start on a computer without Linux cgroup v2 and say how to get a Linux there (WSL 2 on
+  Windows), instead of failing later on a symptom such as a missing `python3`
+  ([installation](docs/getting_started/installation.md#on-your-computer), decision 0022).
+
+Operator action: **an upgraded store cannot be opened by 0.1.1 or earlier**, which refuses a
+format 2 segment as an unknown version. Back up the store before upgrading if a downgrade may be
+needed. Otherwise none. A store that verified clean before and holds no such damage verifies clean
 now. Run `bijective-deploy restore-drill` on the latest backup to confirm.
 
 ## 0.1.1

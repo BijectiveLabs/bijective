@@ -25,4 +25,5 @@ the code that carries it out.
 | [0018](0018-paper-venue-rebuilt-from-its-record.md) | A paper venue is rebuilt from its record at start, so a restarted paper run continues |
 | [0019](0019-market-journal-durable-per-batch.md) | The market journal is made durable per batch of what is already waiting, never per frame |
 | [0020](0020-mcp-server-for-research-agents.md) | An MCP server through which a research agent runs the research programs, with no route to an order |
-| [0021](0021-entry-header-check.md) | Proposed: a check over each entry header (event store format 2), so a damaged length is never read as a torn tail |
+| [0021](0021-entry-header-check.md) | A check over each entry header (event store format 2), so a damaged length is never read as a torn tail |
+| [0022](0022-a-linux-host-on-every-computer.md) | Strategy runs stay bounded by the Linux kernel. Windows and macOS run the platform inside a Linux, and the first command says so |

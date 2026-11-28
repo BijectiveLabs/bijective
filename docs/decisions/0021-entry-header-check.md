@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Proposed, 2026-11-28. Not built |
+| Status | Accepted 2026-11-28 and built (`crates/event_store/src/format.rs`) |
 | Extends | The event store's on-disk format ([event sourcing](../concepts/event_sourcing.md)) |
 
 ## Context
@@ -32,8 +32,12 @@ leaves the record.
 3. **Format 1 stays readable.** The segment header already carries the format version. A format 1
    segment is judged as it is today. A writer opens every new segment in format 2, so a stream
    moves to format 2 at its next rotation or recovery, and no segment is rewritten.
-4. **Cost.** One SHA-256 over 14 bytes per append, measured before acceptance against the journal
-   rate of decision 0019 (4370 frames per second on the 2026-11-27 corpus).
+4. **Cost.** One SHA-256 over 14 bytes per append. Measured 2026-11-28 on WSL 2 (release build,
+   another build running on the same host, so an upper figure): 824 ns per header, against 4.6 us
+   per unsynced 120-byte append and 229 us per frame at the journal rate of decision 0019 (4370
+   frames per second): under 0.4 percent of a frame.
+5. **No downgrade.** A build before format 2 refuses a format 2 segment as an unknown version, so
+   a store a format 2 build has written cannot be opened by 0.1.1 or earlier.
 
 ## What it rules out and what it does not
 

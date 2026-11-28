@@ -140,7 +140,9 @@ scripts/measure/  Measurement scripts
 
 ## Quick start
 
-The platform targets Linux. Strategy runs are bounded with cgroup v2 and Linux namespaces.
+The platform targets Linux. Strategy runs are bounded with cgroup v2 and Linux namespaces. On
+Windows, run it inside WSL 2 (`wsl --install -d Ubuntu`); on macOS, inside a Linux virtual machine.
+The release artefact needs no build: see [Installation](docs/getting_started/installation.md#on-your-computer).
 
 ```bash
 cargo build --release

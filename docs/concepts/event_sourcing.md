@@ -70,10 +70,17 @@ last whole entry, leaves the tail on disk as it was found, and opens a new segme
 
 Shape alone does not tell a torn tail from damage. A length field damaged to claim more than the
 segment holds runs past the end exactly as an interrupted write does, and read as a torn tail it
-would drop every acknowledged entry after it. The verifier therefore asks the entry itself: a torn
-write leaves only a prefix of its payload, so its link verifies at no end. When the link verifies at
-the end of the segment, or where a header for the next position begins, the entry was whole and the
-segment is `Corrupt` (`PayloadLengthDamaged`). A sealed segment is also held to its manifest: entry
+would drop every acknowledged entry after it. Format 2
+([decision 0021](../decisions/0021-entry-header-check.md)) ends each entry header with eight bytes
+of SHA-256 over its marker, length and position. A header is written whole before its payload, so
+a whole header that fails its check is damage (`HeaderCheck`), and only a header that verifies,
+followed by a short payload, is a torn tail. A writer opens every new segment in format 2. A
+format 1 segment is still read, and when a stream's active segment is format 1 the writer seals it
+as it stands and continues in a new segment, so no byte is rewritten. Format 1 has no header
+check: there the verifier asks the entry itself, since a torn write leaves only a prefix of its
+payload and its link verifies at no end. When the link verifies at the end of the segment, or where
+a header for the next position begins, the entry was whole and the segment is `Corrupt`
+(`PayloadLengthDamaged`). A sealed segment is also held to its manifest: entry
 count, first position, sealed length and last link must match, so a sealed segment cut short at an
 entry boundary is `Corrupt` (`ManifestMismatch`), not a shorter clean one. A manifest that is
 missing or does not verify leaves the judgement to the bytes, so an interrupted seal never makes a

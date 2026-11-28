@@ -5,9 +5,14 @@ path to capital. Nothing is installed and no venue is needed.
 
 ## Prepare
 
+On Windows or macOS, first get a Linux to run it in, as
+[Installation](installation.md#on-your-computer) describes: on Windows that is one command.
+
 ```bash
 export PATH="$PWD/target/release:$PATH"
 ```
+
+With the release artefact instead of a build, the path is the artefact's `bin` directory.
 
 Runs are bounded by cgroup v2. Where `BIJECTIVE_CGROUP_ROOT` names a delegated subtree, it is used;
 otherwise the command asks the init system for a user scope and says which subtree it created. It
