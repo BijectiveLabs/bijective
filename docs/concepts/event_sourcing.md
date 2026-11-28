@@ -61,13 +61,23 @@ Verification returns one of three verdicts:
 | Verdict | Meaning |
 |---|---|
 | `Clean` | Every complete entry chains correctly. An empty segment is clean with zero entries |
-| `Corrupt` | An entry does not match the chain, the sequence broke, or a length is out of range. The segment is quarantined, never repaired |
+| `Corrupt` | An entry does not match the chain, the sequence broke, a length is out of range or damaged, or a sealed segment does not hold what its manifest declares. The segment is quarantined, never repaired |
 | `Unreadable` | Not a segment: truncated header, wrong magic, unknown format version, or an I/O failure |
 
 A process killed in the middle of an append leaves a torn tail. Those bytes were never a record,
 so the segment reports `Clean` with `incomplete_tail_bytes` set. Recovery seals the segment at its
-last whole entry, leaves the tail on disk as it was found, and opens a new segment. A torn tail is
-short. Damage is wrong. The two are told apart by shape.
+last whole entry, leaves the tail on disk as it was found, and opens a new segment.
+
+Shape alone does not tell a torn tail from damage. A length field damaged to claim more than the
+segment holds runs past the end exactly as an interrupted write does, and read as a torn tail it
+would drop every acknowledged entry after it. The verifier therefore asks the entry itself: a torn
+write leaves only a prefix of its payload, so its link verifies at no end. When the link verifies at
+the end of the segment, or where a header for the next position begins, the entry was whole and the
+segment is `Corrupt` (`PayloadLengthDamaged`). A sealed segment is also held to its manifest: entry
+count, first position, sealed length and last link must match, so a sealed segment cut short at an
+entry boundary is `Corrupt` (`ManifestMismatch`), not a shorter clean one. A manifest that is
+missing or does not verify leaves the judgement to the bytes, so an interrupted seal never makes a
+stream unopenable.
 
 ## Encoding
 

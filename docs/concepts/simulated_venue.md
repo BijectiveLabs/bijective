@@ -86,6 +86,9 @@ from its profile alone: no credential is read and no order leaves the node.
 - `scripts/verify/paper_path.sh` drives a strategy end to end through it: a paper session proposes,
   a signed command resumes the node, the order is admitted against portfolio, desk and strategy
   limits, fills, is recorded, and the strategy is told it filled.
+- `scripts/verify/stale_market.sh` drives a burst of limit and market orders at a paper node whose
+  market is a minute old: every one is refused for the mark's age, none reaches the venue and the
+  node stays active. Once the market is current again, the next proposal is placed and filled.
 
 ## Backtest mode
 

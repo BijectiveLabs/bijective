@@ -261,8 +261,10 @@ A desk is a declared structure over the platform's holdings, not a second record
   desk's ceiling is refused, never resized.
 - **Price collar** ([decision 0010](../decisions/0010-price-collar-and-flatten.md)). A limit
   price that crosses the instrument's mark by more than the desk's `price_collar_bps` (default
-  500) is refused (`OutsidePriceCollar`); with no mark, or a mark older than the freshness
-  bound, it is refused too. A price that does not cross is not bounded.
+  500) is refused (`OutsidePriceCollar`). A price that does not cross is not bounded. Every
+  order, market orders included, is refused with no mark or a mark older than the freshness
+  bound (`NoMarkForCollar`, `MarkTooOldForCollar`): on a flat book no position carries the mark's
+  age into the figures, so this is where a stale market stops a new order.
 - **Stops** ([decision 0012](../decisions/0012-stop-orders.md)). A stop is checked against the
   price increment like a price. A stop the mark has already passed is refused
   (`StopAlreadyCrossed`), and a stop-limit's price is collared around its stop.

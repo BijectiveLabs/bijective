@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Accepted, 2026-11-19 |
+| Status | Accepted, 2026-11-19. Amended 2026-11-28 (rule 1: market orders need a current mark) |
 | Extends | Desk admission, the operator command set and the order path's clearance |
 
 ## Context
@@ -24,7 +24,12 @@ which is when positions are closed, no reduction could be placed at all.
    does not cross rests without harm and is not bounded. The mark is the one the node values with
    (the mid of the market stream); a limit price with no mark, or with a mark older than the
    node's freshness bound, is refused (`NoMarkForCollar`, `MarkTooOldForCollar`). A market order
-   carries no price the venue sees; its cap and the per-order ceiling bound it.
+   carries no price the venue sees, so its price is not collared: its cap and the per-order
+   ceiling bound it. Amended 2026-11-28: a market order is refused on the same two grounds. The
+   stale-figures check did not cover it on a flat book, whose figures carry the account read's
+   time and no mark, and `scripts/verify/stale_market.sh` placed and filled market orders decided
+   on a book a minute old. A flatten order does not pass through the collar, so a stale market
+   never stops a closing.
 2. **`flatten` closes what the record holds.** A signed operator command, open to an operator and
    a risk officer, not an observer. Carried out, it moves the node to reducing (a halted node
    stays halted) and, after the pass's sweep, places one reduce-only market order per open

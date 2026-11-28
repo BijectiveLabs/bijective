@@ -6,6 +6,22 @@ GitHub release with the artefact, its SHA-256 digest and the strategy library, a
 at `ghcr.io/bijectivelabs/bijective`. Verify an artefact before installing it with
 [Verify a release before installing it](docs/how_to/verify_a_release.md).
 
+## Unreleased
+
+- **A stale market refuses market orders too.** A market order on a flat book was placed on a
+  mark of any age, because the stale-figures check reads the age of held positions and a flat
+  book holds none. Every order now needs a mark within the freshness bound (decision 0010,
+  amended). A strategy that sends market orders on an instrument the node has no current market
+  for is refused where it was placed before.
+- **The event store tells a damaged length from a torn tail.** A length field damaged to run past
+  the end of a segment read as a torn tail, so the segment verified clean and the entries after it
+  were dropped from reads and from recovery. It is now `Corrupt` (`PayloadLengthDamaged`). A sealed
+  segment is held to its manifest, so one cut short at an entry boundary is `Corrupt`
+  (`ManifestMismatch`). The restore drill proves both refusals at fixed offsets.
+
+Operator action: none. A store that verified clean before and holds no such damage verifies clean
+now. Run `bijective-deploy restore-drill` on the latest backup to confirm.
+
 ## 0.1.1
 
 - **An MCP server for research agents** (decision 0020): `bijective-mcp` lets an AI agent write,
