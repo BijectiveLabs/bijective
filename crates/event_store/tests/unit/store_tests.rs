@@ -451,3 +451,42 @@ fn a_sealed_segment_cut_short_is_refused_by_its_manifest() {
     }
     assert!(matches!(read_range(&r, "orders", 0, 10), Err(StoreError::Quarantined { .. })));
 }
+
+/// A stream written in format 1 continues in a new format 2 segment: the old one is sealed as it
+/// stands and nothing is rewritten, and a read crosses both.
+#[test]
+fn a_format_1_segment_is_sealed_and_the_stream_continues_in_format_2() {
+    let r = root("format-1");
+    {
+        let mut w = StreamWriter::open(&r, "orders").unwrap();
+        w.append(b"one").unwrap();
+        w.append(b"two").unwrap();
+    }
+    // Rewritten here as format 1 would have written it.
+    let seg = seg0(&r, "orders");
+    let v2 = fs::read(&seg).unwrap();
+    let mut v1 = v2[..SEGMENT_HEADER_LEN].to_vec();
+    v1[4..6].copy_from_slice(&FORMAT_V1.to_be_bytes());
+    let mut at = SEGMENT_HEADER_LEN;
+    for payload in [&b"one"[..], &b"two"[..]] {
+        v1.extend_from_slice(&v2[at..at + 46]);
+        v1.extend_from_slice(payload);
+        at += ENTRY_HEADER_LEN + payload.len();
+    }
+    fs::write(&seg, &v1).unwrap();
+    let before = fs::read(&seg).unwrap();
+
+    {
+        let mut w = StreamWriter::open(&r, "orders").unwrap();
+        assert_eq!(w.append(b"three").unwrap(), 2);
+    }
+    assert_eq!(fs::read(&seg).unwrap(), before, "the format 1 segment was not written to");
+    let manifest = read_manifest(&r.join("orders").join("000000000000.manifest")).unwrap();
+    assert_eq!((manifest.format, manifest.entries), (FORMAT_V1, 2));
+    let next = r.join("orders").join("000000000001.seg");
+    assert_eq!(fs::read(&next).unwrap()[4..6], FORMAT_VERSION.to_be_bytes());
+
+    let got = read_range(&r, "orders", 0, 10).unwrap();
+    let payloads: Vec<&[u8]> = got.iter().map(|e| e.payload.as_slice()).collect();
+    assert_eq!(payloads, [&b"one"[..], &b"two"[..], &b"three"[..]]);
+}

@@ -72,6 +72,7 @@ type SegmentRead = Result<(Vec<Entry>, Continuation), Verdict>;
 fn whole_segment(bytes: &[u8]) -> SegmentRead {
     let head = parse_segment_header(bytes).map_err(|reason| Verdict::Unreadable { reason })?;
     let from = Continuation {
+        format: head.format,
         offset: SEGMENT_HEADER_LEN as u64,
         next_seq: head.first_seq,
         prior_link: head.base_link,

@@ -182,9 +182,10 @@ fn a_dropped_entry_is_a_sequence_break() {
 /// Without the bound, four damaged bytes become an allocation failure unrelated to the corruption.
 #[test]
 fn an_absurd_payload_length_is_refused_before_allocating() {
+    // Written with a consistent check, as a wrong writer would: the bound still holds.
     let mut img = image(1, &[b"alpha"]);
-    img[SEGMENT_HEADER_LEN + 2..SEGMENT_HEADER_LEN + 6]
-        .copy_from_slice(&0xffff_ffffu32.to_be_bytes());
+    let header = entry_header(1, 0xffff_ffff, Digest::genesis());
+    img[SEGMENT_HEADER_LEN..SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN].copy_from_slice(&header);
     match verify_image(&img) {
         Verdict::Corrupt { reason, .. } => {
             assert_eq!(reason, CorruptReason::PayloadLengthOutOfRange { found: 0xffff_ffff })
@@ -251,12 +252,29 @@ fn claim_length(img: &mut [u8], entry_offset: usize, claimed: u32) {
     img[entry_offset + 2..entry_offset + 6].copy_from_slice(&claimed.to_be_bytes());
 }
 
-/// A damaged length that points past the end looks like a torn tail by shape alone.
-/// It is not one: the entry it describes is whole, and every entry after it was acknowledged.
+/// The same segment in format 1: each entry header without its check.
+fn image_v1(first_seq: u64, payloads: &[&[u8]]) -> Vec<u8> {
+    let v2 = image(first_seq, payloads);
+    let mut out = v2[..SEGMENT_HEADER_LEN].to_vec();
+    out[4..6].copy_from_slice(&FORMAT_V1.to_be_bytes());
+    let mut at = SEGMENT_HEADER_LEN;
+    for p in payloads {
+        out.extend_from_slice(&v2[at..at + V1_HEADER]);
+        out.extend_from_slice(p);
+        at += ENTRY_HEADER_LEN + p.len();
+    }
+    out
+}
+
+const V1_HEADER: usize = 46;
+
+/// Format 1 has no header check. A damaged length that points past the end looks like a torn tail
+/// by shape alone. It is not one: the entry it describes is whole, and every entry after it was
+/// acknowledged.
 #[test]
 fn a_length_damaged_past_the_end_mid_segment_is_corrupt_not_a_torn_tail() {
-    let mut img = image(1, &[b"alpha", b"beta", b"gamma"]);
-    let second = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    let mut img = image_v1(1, &[b"alpha", b"beta", b"gamma"]);
+    let second = SEGMENT_HEADER_LEN + V1_HEADER + b"alpha".len();
     claim_length(&mut img, second, 70_000);
 
     match verify_image(&img) {
@@ -271,8 +289,8 @@ fn a_length_damaged_past_the_end_mid_segment_is_corrupt_not_a_torn_tail() {
 /// The last entry has no successor to betray it, so its own link over the bytes that remain decides.
 #[test]
 fn a_length_damaged_past_the_end_on_the_last_entry_is_corrupt() {
-    let mut img = image(1, &[b"alpha", b"beta"]);
-    let last = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    let mut img = image_v1(1, &[b"alpha", b"beta"]);
+    let last = SEGMENT_HEADER_LEN + V1_HEADER + b"alpha".len();
     claim_length(&mut img, last, 0x00FF_0000);
 
     match verify_image(&img) {
@@ -302,4 +320,59 @@ fn a_torn_tail_whose_payload_holds_a_marker_is_still_clean() {
         }
         other => panic!("expected Clean, got {other:?}"),
     }
+}
+
+/// Format 2: a whole header that fails its check is damage, wherever its length points.
+#[test]
+fn a_damaged_length_fails_the_header_check_in_format_2() {
+    let mut img = image(1, &[b"alpha", b"beta", b"gamma"]);
+    let second = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    claim_length(&mut img, second, 70_000);
+    match verify_image(&img) {
+        Verdict::Corrupt { reason, at_offset } => {
+            assert_eq!(reason, CorruptReason::HeaderCheck);
+            assert_eq!(at_offset, second as u64);
+        }
+        other => panic!("expected Corrupt, got {other:?}"),
+    }
+}
+
+/// The case format 1 cannot tell from a torn write: the last entry's length and payload both
+/// damaged in the active segment. Format 2 refuses it.
+#[test]
+fn a_damaged_length_and_payload_on_the_last_entry_is_refused_in_format_2() {
+    let mut img = image(1, &[b"alpha", b"beta"]);
+    let last = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN + b"alpha".len();
+    claim_length(&mut img, last, 0x00FF_0000);
+    let end = img.len() - 1;
+    img[end] ^= 0xFF;
+    assert!(matches!(
+        verify_image(&img),
+        Verdict::Corrupt { reason: CorruptReason::HeaderCheck, .. }
+    ));
+
+    let mut old = image_v1(1, &[b"alpha", b"beta"]);
+    let last_v1 = SEGMENT_HEADER_LEN + V1_HEADER + b"alpha".len();
+    claim_length(&mut old, last_v1, 0x00FF_0000);
+    let end = old.len() - 1;
+    old[end] ^= 0xFF;
+    assert!(
+        matches!(verify_image(&old), Verdict::Clean { entries: 1, .. }),
+        "format 1 reads this as a torn tail, which is why format 2 exists"
+    );
+}
+
+/// A format 1 segment is still read, and a format this build does not know is refused.
+#[test]
+fn format_1_is_read_and_an_unknown_format_is_refused() {
+    let img = image_v1(1, &[b"alpha", b"beta"]);
+    assert!(matches!(verify_image(&img), Verdict::Clean { entries: 2, last_seq: 2, .. }));
+    assert_eq!(read_entries(&img).map(|e| e.len()), Some(2));
+
+    let mut future = img.clone();
+    future[4..6].copy_from_slice(&3u16.to_be_bytes());
+    assert_eq!(
+        verify_image(&future),
+        Verdict::Unreadable { reason: UnreadableReason::UnknownFormatVersion { found: 3 } }
+    );
 }

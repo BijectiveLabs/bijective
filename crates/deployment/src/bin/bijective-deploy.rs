@@ -9,7 +9,9 @@ use std::path::{Path, PathBuf};
 use bijective_deployment::{
     Checksums, Deployment, NodeState, artefact, assess_node, compose, generate,
 };
-use bijective_event_store::format::{ENTRY_HEADER_LEN, SEGMENT_HEADER_LEN, Verdict};
+use bijective_event_store::format::{
+    SEGMENT_HEADER_LEN, Verdict, entry_header_len, parse_segment_header,
+};
 use bijective_event_store::store::verify_segment;
 
 fn main() -> std::process::ExitCode {
@@ -333,7 +335,7 @@ fn prove_refusals(restored: &Path) -> Result<Vec<String>, String> {
 
     // Fixed offsets in the first entry, so every run proves the same two refusals.
     for (damage, offset) in [
-        ("a damaged payload byte", ENTRY_PAYLOAD_AT),
+        ("a damaged payload byte", first_payload_at(&pristine)?),
         ("a length damaged to run past the end", ENTRY_LENGTH_AT),
     ] {
         let mut bytes = pristine.clone();
@@ -366,8 +368,12 @@ fn target_is_usable(into: &Path) -> bool {
     !into.exists() || std::fs::read_dir(into).map(|mut d| d.next().is_none()).unwrap_or(false)
 }
 
-/// The first byte of the first entry's payload in a segment.
-const ENTRY_PAYLOAD_AT: usize = SEGMENT_HEADER_LEN + ENTRY_HEADER_LEN;
+/// The first byte of the first entry's payload, after a header whose length the format fixes.
+fn first_payload_at(segment: &[u8]) -> Result<usize, String> {
+    let head = parse_segment_header(segment)
+        .map_err(|reason| format!("the restored segment has no readable header: {reason:?}"))?;
+    Ok(SEGMENT_HEADER_LEN + entry_header_len(head.format))
+}
 /// The second byte of the first entry's length: flipped, it claims more than the segment holds
 /// while staying under the payload bound, which is the damage that resembles a torn tail.
 const ENTRY_LENGTH_AT: usize = SEGMENT_HEADER_LEN + 3;

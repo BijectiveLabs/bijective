@@ -264,6 +264,14 @@ impl StreamWriter {
                         } else if manifest_path(&dir, last).exists() {
                             // Already sealed by an earlier run. Never reopen a sealed segment.
                             (last + 1, next, next, last_link, 0, true)
+                        } else if segment_format(&path) != Some(FORMAT_VERSION) {
+                            // One segment, one format: an older one is sealed as it stands and
+                            // the stream continues in a new segment, so no byte is rewritten.
+                            seal_at(
+                                &dir, stream, last, first_seq, last_seq, entries, sealed_len,
+                                last_link,
+                            )?;
+                            (last + 1, next, next, last_link, 0, true)
                         } else {
                             (last, first_seq, next, last_link, sealed_len, false)
                         }
@@ -385,6 +393,11 @@ impl Drop for StreamWriter {
     }
 }
 
+/// The format a segment's header declares, or `None` when the header does not parse.
+fn segment_format(path: &Path) -> Option<u16> {
+    read_file(path).ok().and_then(|b| parse_segment_header(&b).ok()).map(|h| h.format)
+}
+
 /// Seal a segment: manifest first, then read-only, so a crash leaves a described segment.
 #[allow(clippy::too_many_arguments)]
 fn seal_at(
@@ -398,15 +411,13 @@ fn seal_at(
     last_link: Digest,
 ) -> Result<Manifest, StoreError> {
     let seg = segment_path(dir, index);
-    let base_link = match read_file(&seg) {
-        Ok(b) => {
-            parse_segment_header(&b).map(|h| h.base_link).unwrap_or_else(|_| Digest::genesis())
-        }
-        Err(_) => Digest::genesis(),
+    let (format, base_link) = match read_file(&seg).map(|b| parse_segment_header(&b)) {
+        Ok(Ok(h)) => (h.format, h.base_link),
+        _ => (FORMAT_VERSION, Digest::genesis()),
     };
 
     let manifest = Manifest {
-        format: FORMAT_VERSION,
+        format,
         stream: stream.to_string(),
         segment: index,
         first_seq,

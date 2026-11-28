@@ -8,14 +8,24 @@ use crate::digest::{Digest, Sha256};
 
 pub const SEGMENT_MAGIC: [u8; 4] = *b"BJES";
 
-/// On-disk format version. A segment from a future version is refused, never partly parsed.
-pub const FORMAT_VERSION: u16 = 1;
+/// The on-disk format a writer opens new segments in (decision 0021). A segment from a version
+/// this build does not know is refused, never partly parsed.
+pub const FORMAT_VERSION: u16 = 2;
+
+/// The first format, still read: its entry header has no check of its own.
+pub const FORMAT_V1: u16 = 1;
 
 /// magic(4) + version(2) + reserved(2) + first_seq(8) + base_link(32)
 pub const SEGMENT_HEADER_LEN: usize = 48;
 
-/// entry_magic(2) + payload_len(4) + seq(8) + link(32)
-pub const ENTRY_HEADER_LEN: usize = 46;
+/// Format 2: entry_magic(2) + payload_len(4) + seq(8) + link(32) + check(8)
+pub const ENTRY_HEADER_LEN: usize = 54;
+
+/// Format 1: entry_magic(2) + payload_len(4) + seq(8) + link(32)
+const ENTRY_HEADER_LEN_V1: usize = 46;
+
+/// The bytes the header check covers: marker, length and position.
+const CHECKED_LEN: usize = 14;
 
 const ENTRY_MAGIC: [u8; 2] = *b"EN";
 
@@ -57,6 +67,9 @@ pub enum CorruptReason {
     PayloadLengthDamaged { found: u32 },
     /// A sealed segment does not hold what its manifest says was sealed: cut short, or re-cut.
     ManifestMismatch,
+    /// A format 2 entry header does not match its own check: its marker, length or position is
+    /// damaged, so where the entry ends is not known.
+    HeaderCheck,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -81,6 +94,22 @@ pub fn entry_link(prev_link: Digest, seq: u64, payload: &[u8]) -> Digest {
     h.finish()
 }
 
+/// The length of an entry header in `format`. Precondition: `format` was accepted by
+/// `parse_segment_header`.
+#[must_use]
+pub fn entry_header_len(format: u16) -> usize {
+    if format == FORMAT_V1 { ENTRY_HEADER_LEN_V1 } else { ENTRY_HEADER_LEN }
+}
+
+/// The first eight bytes of SHA-256 over a header's marker, length and position.
+fn header_check(checked: &[u8]) -> [u8; 8] {
+    let mut h = Sha256::new();
+    h.update(checked);
+    let mut out = [0u8; 8];
+    out.copy_from_slice(&h.finish().0[..8]);
+    out
+}
+
 pub fn segment_header(first_seq: u64, base_link: Digest) -> [u8; SEGMENT_HEADER_LEN] {
     let mut out = [0u8; SEGMENT_HEADER_LEN];
     out[0..4].copy_from_slice(&SEGMENT_MAGIC);
@@ -97,10 +126,13 @@ pub fn entry_header(seq: u64, payload_len: u32, link: Digest) -> [u8; ENTRY_HEAD
     out[2..6].copy_from_slice(&payload_len.to_be_bytes());
     out[6..14].copy_from_slice(&seq.to_be_bytes());
     out[14..46].copy_from_slice(&link.0);
+    let check = header_check(&out[..CHECKED_LEN]);
+    out[46..54].copy_from_slice(&check);
     out
 }
 
 pub struct SegmentHead {
+    pub format: u16,
     pub first_seq: u64,
     pub base_link: Digest,
 }
@@ -113,14 +145,14 @@ pub fn parse_segment_header(bytes: &[u8]) -> Result<SegmentHead, UnreadableReaso
         return Err(UnreadableReason::BadMagic);
     }
     let version = u16::from_be_bytes([bytes[4], bytes[5]]);
-    if version != FORMAT_VERSION {
+    if version != FORMAT_VERSION && version != FORMAT_V1 {
         return Err(UnreadableReason::UnknownFormatVersion { found: version });
     }
     let mut seq = [0u8; 8];
     seq.copy_from_slice(&bytes[8..16]);
     let mut link = [0u8; 32];
     link.copy_from_slice(&bytes[16..48]);
-    Ok(SegmentHead { first_seq: u64::from_be_bytes(seq), base_link: Digest(link) })
+    Ok(SegmentHead { format: version, first_seq: u64::from_be_bytes(seq), base_link: Digest(link) })
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -138,6 +170,7 @@ pub fn verify_image(bytes: &[u8]) -> Verdict {
         Err(reason) => return Verdict::Unreadable { reason },
     };
     let from = Continuation {
+        format: head.format,
         offset: SEGMENT_HEADER_LEN as u64,
         next_seq: head.first_seq,
         prior_link: head.base_link,
@@ -159,6 +192,8 @@ pub fn verify_image(bytes: &[u8]) -> Verdict {
 /// complete entry, the position expected next, and the link that entry carried.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Continuation {
+    /// The segment's format, which fixes how long each entry header is.
+    pub format: u16,
     pub offset: u64,
     pub next_seq: u64,
     pub prior_link: Digest,
@@ -193,6 +228,8 @@ fn walk(
     let mut expected_seq = from.next_seq;
     let mut prev_link = from.prior_link;
     let mut entries: u64 = 0;
+    let header_len = entry_header_len(from.format);
+    let checked = from.format != FORMAT_V1;
     let corrupt =
         |at: usize, reason| Verdict::Corrupt { at_offset: from.offset + at as u64, reason };
 
@@ -201,6 +238,7 @@ fn walk(
         let done = |entries, tail: usize| Walked {
             entries,
             at: Continuation {
+                format: from.format,
                 offset: from.offset + offset as u64,
                 next_seq: expected_seq,
                 prior_link: prev_link,
@@ -209,28 +247,19 @@ fn walk(
         };
 
         // Not enough for a header: either a clean end (nothing left) or an interrupted write.
-        if remaining < ENTRY_HEADER_LEN {
+        if remaining < header_len {
             return Ok(done(entries, remaining));
         }
 
-        let hdr = &bytes[offset..offset + ENTRY_HEADER_LEN];
-        if hdr[0..2] != ENTRY_MAGIC {
-            // The marker is wrong. This is not a torn tail - a torn tail is short, not wrong.
-            return Err(corrupt(offset, CorruptReason::EntryMarker));
-        }
+        let Header { payload_len, seq, link: stored } =
+            read_header(&bytes[offset..offset + header_len], checked)
+                .map_err(|reason| corrupt(offset, reason))?;
 
-        let payload_len = u32::from_be_bytes([hdr[2], hdr[3], hdr[4], hdr[5]]);
-        if payload_len > MAX_PAYLOAD_LEN {
-            let reason = CorruptReason::PayloadLengthOutOfRange { found: payload_len };
-            return Err(corrupt(offset, reason));
-        }
-
-        let total = ENTRY_HEADER_LEN + payload_len as usize;
+        let total = header_len + payload_len as usize;
         if remaining < total {
-            let mut link_b = [0u8; 32];
-            link_b.copy_from_slice(&hdr[14..46]);
-            let stored = Digest(link_b);
-            if is_whole_under_damaged_length(&bytes[offset..], prev_link, expected_seq, stored) {
+            if !checked
+                && is_whole_under_damaged_length(&bytes[offset..], prev_link, expected_seq, stored)
+            {
                 let reason = CorruptReason::PayloadLengthDamaged { found: payload_len };
                 return Err(corrupt(offset, reason));
             }
@@ -238,19 +267,12 @@ fn walk(
             return Ok(done(entries, remaining));
         }
 
-        let mut seq_b = [0u8; 8];
-        seq_b.copy_from_slice(&hdr[6..14]);
-        let seq = u64::from_be_bytes(seq_b);
         if seq != expected_seq {
             let reason = CorruptReason::SequenceBreak { expected: expected_seq, found: seq };
             return Err(corrupt(offset, reason));
         }
 
-        let mut link_b = [0u8; 32];
-        link_b.copy_from_slice(&hdr[14..46]);
-        let stored = Digest(link_b);
-
-        let payload = &bytes[offset + ENTRY_HEADER_LEN..offset + total];
+        let payload = &bytes[offset + header_len..offset + total];
         if entry_link(prev_link, seq, payload) != stored {
             return Err(corrupt(offset, CorruptReason::LinkMismatch));
         }
@@ -265,7 +287,38 @@ fn walk(
     }
 }
 
-/// Whether an entry whose length runs past the end is in fact whole, so its length was damaged.
+/// The fields of one whole entry header.
+struct Header {
+    payload_len: u32,
+    seq: u64,
+    link: Digest,
+}
+
+/// Read one whole entry header, or why it is damage. `checked` is format 2, whose header carries
+/// a check over its marker, length and position.
+fn read_header(hdr: &[u8], checked: bool) -> Result<Header, CorruptReason> {
+    if hdr[0..2] != ENTRY_MAGIC {
+        // The marker is wrong. This is not a torn tail - a torn tail is short, not wrong.
+        return Err(CorruptReason::EntryMarker);
+    }
+    // A header is written whole before its payload, so a whole header that fails its check
+    // was damaged, not interrupted. This is what tells a damaged length from a torn tail.
+    if checked && hdr[ENTRY_HEADER_LEN_V1..ENTRY_HEADER_LEN] != header_check(&hdr[..CHECKED_LEN]) {
+        return Err(CorruptReason::HeaderCheck);
+    }
+    let payload_len = u32::from_be_bytes([hdr[2], hdr[3], hdr[4], hdr[5]]);
+    if payload_len > MAX_PAYLOAD_LEN {
+        return Err(CorruptReason::PayloadLengthOutOfRange { found: payload_len });
+    }
+    let mut seq = [0u8; 8];
+    seq.copy_from_slice(&hdr[6..14]);
+    let mut link = [0u8; 32];
+    link.copy_from_slice(&hdr[14..46]);
+    Ok(Header { payload_len, seq: u64::from_be_bytes(seq), link: Digest(link) })
+}
+
+/// Format 1 only: whether an entry whose length runs past the end is in fact whole, so its
+/// length was damaged. Format 2 answers this with the header check.
 /// Shape alone cannot tell a damaged length from a torn write: both run past the end. A torn write
 /// leaves a prefix of its payload, so the entry's own link verifies at no end. The ends tried are
 /// the end of the bytes and each place a successor header could begin (marker and next position).
@@ -277,14 +330,14 @@ fn is_whole_under_damaged_length(
     seq: u64,
     stored: Digest,
 ) -> bool {
-    let payload = &entry[ENTRY_HEADER_LEN..];
+    let payload = &entry[ENTRY_HEADER_LEN_V1..];
     if entry_link(prev_link, seq, payload) == stored {
         return true;
     }
     let next = seq.wrapping_add(1).to_be_bytes();
-    let starts = payload.len().saturating_sub(ENTRY_HEADER_LEN - 1);
+    let starts = payload.len().saturating_sub(ENTRY_HEADER_LEN_V1 - 1);
     (0..starts).any(|at| {
-        let successor = &payload[at..at + ENTRY_HEADER_LEN];
+        let successor = &payload[at..at + ENTRY_HEADER_LEN_V1];
         successor[0..2] == ENTRY_MAGIC
             && successor[6..14] == next
             && entry_link(prev_link, seq, &payload[..at]) == stored
@@ -295,6 +348,7 @@ fn is_whole_under_damaged_length(
 pub fn read_entries(bytes: &[u8]) -> Option<Vec<Entry>> {
     let head = parse_segment_header(bytes).ok()?;
     let from = Continuation {
+        format: head.format,
         offset: SEGMENT_HEADER_LEN as u64,
         next_seq: head.first_seq,
         prior_link: head.base_link,
