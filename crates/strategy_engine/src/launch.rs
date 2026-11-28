@@ -30,8 +30,8 @@ pub fn host_fix(os: &str) -> Option<String> {
         ),
         "macos" => (
             "macOS",
-            "Run it inside a Linux virtual machine with systemd (Ubuntu 24.04 or newer), then \
-             follow the quick start inside it.",
+            "Run it inside a Linux virtual machine: `brew install lima`, `limactl start`, then \
+             `lima` opens a shell in it where the quick start runs.",
         ),
         _ => ("this operating system", "Run it on Linux."),
     };
