@@ -1,6 +1,6 @@
 # Close positions when a node stops
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: crates/control_engine/tests/unit/path_tests.rs
 Applies-To: any node trading live
 

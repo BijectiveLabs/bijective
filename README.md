@@ -12,7 +12,7 @@
 
 | Branch   | Version | Build |
 | :------- | :------ | :---- |
-| `master` | 0.1.0, the latest release | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
+| `master` | 0.1.1, the latest release | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 | `dev`    | development, the default branch | [![build](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/BijectiveLabs/bijective/actions/workflows/ci.yml) |
 
 | Platform                      | Rust   | Python      | Notes |
@@ -44,7 +44,7 @@ the node writes is documented, so everything it holds can be read without anythi
 
 ## Status
 
-Early development: version 0.1.0, and interfaces will change before 1.0. Status as of
+Early development: version 0.1.1, and interfaces will change before 1.0. Status as of
 2026-11-27, with the evidence for each venue on its [integration page](docs/integrations/index.md).
 
 | Area | State |

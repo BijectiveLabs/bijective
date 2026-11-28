@@ -1,6 +1,6 @@
 # Rehearse an install on this host
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/node.sh
 Applies-To: a host that will run the platform, before the first real install, and after any change
             to the manifest, the unit generator or a program's start-up

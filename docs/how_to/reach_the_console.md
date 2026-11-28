@@ -1,6 +1,6 @@
 # Reach the console from another machine
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/console_tls.sh
 Applies-To: an operator who reads or controls a node from a machine other than the node's host
 

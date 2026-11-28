@@ -1,6 +1,6 @@
 # Measure what an exchange costs on this node
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/measure/exchange_cost.sh
 Applies-To: before a long backtest on a node the platform has not been measured on, and after any
             change to the supervisor's exchange handling

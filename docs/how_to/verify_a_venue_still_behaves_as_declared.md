@@ -1,6 +1,6 @@
 # Verify a venue still behaves as declared
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/venue_assurance.sh
 Applies-To: before a venue is first traded, after any venue announcement, and on the cadence the
             venue's profile declares

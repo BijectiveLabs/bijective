@@ -1,6 +1,6 @@
 # Install a node and bring it up
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/boundary.sh
 Applies-To: a fresh host, after [Verify a release before installing it](verify_a_release.md) has passed
 

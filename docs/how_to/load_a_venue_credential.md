@@ -1,6 +1,6 @@
 # Load a venue credential
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/keystore_drill.sh
 Applies-To: before the platform trades on a venue for the first time, and on every key rotation
 

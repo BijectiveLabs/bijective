@@ -1,6 +1,6 @@
 # Move a node to another host
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/migration.sh
 Applies-To: moving a node to new hardware, a new provider, or a rebuilt host
 

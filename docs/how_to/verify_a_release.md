@@ -1,6 +1,6 @@
 # Verify a release before installing it
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/release.sh
 Applies-To: any host, before the first install and before every upgrade
 

@@ -1,6 +1,6 @@
 # Run a node on a Windows workstation
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/node.sh
 Applies-To: a Windows 11 machine that runs the platform before a server is available, and after any
             change to its WSL configuration

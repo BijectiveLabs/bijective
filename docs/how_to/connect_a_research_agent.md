@@ -1,6 +1,6 @@
 # Connect a research agent
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/mcp.sh
 Applies-To: a researcher who wants an AI agent to write, run and judge strategies on a node
 

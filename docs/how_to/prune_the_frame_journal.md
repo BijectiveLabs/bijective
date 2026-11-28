@@ -1,6 +1,6 @@
 # Prune the frame journal
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/market_archive.sh
 Applies-To: a data engine node whose journal disk use must be bounded
 

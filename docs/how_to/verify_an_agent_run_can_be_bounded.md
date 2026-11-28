@@ -1,6 +1,6 @@
 # Verify an agent run can be bounded
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/sandbox.sh
 Applies-To: before the Strategy Engine supervisor is enabled on a node, and after any change to
             the node's cgroup configuration

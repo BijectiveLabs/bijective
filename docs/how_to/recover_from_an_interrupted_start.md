@@ -1,6 +1,6 @@
 # Recover from a start that was interrupted
 
-Platform-Version: 0.1.0
+Platform-Version: 0.1.1
 Drill: scripts/verify/interrupted_start.sh
 Applies-To: after a crash, a power loss, or a kill during startup
 
