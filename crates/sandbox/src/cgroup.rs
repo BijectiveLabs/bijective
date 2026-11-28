@@ -27,19 +27,48 @@ impl std::fmt::Display for CgroupError {
 impl std::error::Error for CgroupError {}
 
 /// Attempted, not inspected: permission on a delegated subtree depends on ownership, mount and delegation, none readable from one file.
+/// A process is moved in as a run's is, by its own pid written to `cgroup.procs`: the kernel also
+/// needs write access to the common ancestor of where the process is and where it goes, which no
+/// file in the subtree shows. Writing nothing proved only that the file opens.
 pub fn probe(root: &Path) -> Result<(), Missing> {
     let scratch = root.join("bijective-probe");
     let outcome = fs::create_dir(&scratch)
         .and_then(|()| kernel_made_it(&scratch))
-        .and_then(|()| fs::write(scratch.join("cgroup.procs"), b""))
-        .map_err(|e| e.to_string());
-    // Empty wherever removal could fail, since kernel_made_it gates the file write. A leftover scratch made the next probe refuse a healthy host.
+        .map_err(|e| e.to_string())
+        .and_then(|()| moves_in(&scratch));
+    // Empty wherever removal could fail, since kernel_made_it gates the move. A leftover scratch made the next probe refuse a healthy host.
     let _ = fs::remove_dir(&scratch);
 
     match outcome {
         Ok(()) => Ok(()),
         Err(detail) => Err(Missing::CgroupSubtree { detail }),
     }
+}
+
+/// Whether a child of this process can move itself into `dir` the way a run does, and why not.
+/// The child exits before the caller removes `dir`, so the probe leaves nothing populated.
+fn moves_in(dir: &Path) -> Result<(), String> {
+    let procs = dir.join("cgroup.procs");
+    let moved = std::process::Command::new("/bin/sh")
+        .arg("-c")
+        .arg(format!("printf %s $$ > '{}'", procs.display()))
+        .env_clear()
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .map_err(|e| format!("could not start a process to move into {}: {e}", dir.display()))?;
+    if moved.status.success() {
+        return Ok(());
+    }
+    Err(format!(
+        "a process could not be moved into {}, so no run could be ({}). The kernel needs write \
+         access to the common ancestor of the cgroup a process is in and the one it moves to: \
+         start the supervisor from inside the delegated subtree. A login session (su, ssh) is \
+         placed in a scope of its own under systemd, outside it",
+        dir.display(),
+        String::from_utf8_lossy(&moved.stderr).trim()
+    ))
 }
 
 /// Whether the kernel made this directory a cgroup, or the filesystem merely made it a directory.
