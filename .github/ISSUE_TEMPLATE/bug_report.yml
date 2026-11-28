@@ -1,0 +1,49 @@
+name: Defect
+description: The platform did something other than what its documentation says.
+labels: ["defect"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A vulnerability is reported privately (SECURITY.md), not here. Do not paste credentials,
+        account data, keystore contents or live order details.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The release (for example 0.1.1) or the commit the node was built from.
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - backtest
+        - paper
+        - live
+        - not a running node (build, gate, documentation)
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the documentation says should happen
+      description: Link the page or decision record.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened
+      description: Exact output, refusal text or gate line. The readiness detail helps.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce it
+      description: Commands, configuration with secrets removed, and the drill or test that shows it.
+    validations:
+      required: true

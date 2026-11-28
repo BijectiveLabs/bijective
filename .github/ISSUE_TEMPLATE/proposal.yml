@@ -1,0 +1,23 @@
+name: Proposal
+description: A capability, venue or change in behaviour the platform does not have.
+labels: ["proposal"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What it is for
+      description: The work it lets you do, and what you do today without it.
+    validations:
+      required: true
+  - type: textarea
+    id: shortest
+    attributes:
+      label: The shortest version that would serve
+      description: What a longer version would add, if you have one in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Venue documentation, measurements or records that show the need or the behaviour.

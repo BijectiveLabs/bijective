@@ -100,6 +100,10 @@ jobs:
     permissions:
       contents: write
       packages: write
+      # Signed build provenance: the OIDC token signs it, the other two store it.
+      id-token: write
+      attestations: write
+      artifact-metadata: write
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -134,6 +138,13 @@ jobs:
           set -euo pipefail
           awk -v v="## ${VERSION}" '$0 == v {on = 1; next} /^## / {on = 0} on' RELEASES.md > notes.md
           [ -s notes.md ] || { echo "RELEASES.md has no section for ${VERSION}." >&2; exit 1; }
+
+      # Before the release exists, so nothing is published that a provenance check cannot verify.
+      - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: |
+            dist/bijective-*-linux-x86_64/*.tar.gz
+            dist/python/*
 
       - name: Publish the release
         env:
