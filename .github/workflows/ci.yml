@@ -72,11 +72,12 @@ jobs:
       - name: Run the change gates
         run: bash scripts/ci/run_gates.sh
 
-      # The strategy set and feedback drills bound real runs in cgroup v2 and needs a subtree delegated to this
-      # user, which a hosted runner does not give. One is made here as root and this shell moved
-      # into a leaf of it, so the drill runs on every change instead of only by hand. The guided
-      # path drill also needs a systemd user session and still runs by hand.
-      - name: Run the strategy set and feedback drills in a delegated cgroup
+      # The strategy set, feedback, paper and stale market drills bound real runs in cgroup v2 and
+      # need a subtree delegated to this user, which a hosted runner does not give. One is made
+      # here as root and this shell moved into a leaf of it, so the drills run on every change
+      # instead of only by hand. The guided path drill also needs a systemd user session and still
+      # runs by hand.
+      - name: Run the strategy set, feedback, paper and stale market drills in a delegated cgroup
         run: |
           set -euo pipefail
           root=/sys/fs/cgroup/bijective-ci
@@ -89,3 +90,4 @@ jobs:
           bash scripts/verify/strategy_set.sh
           bash scripts/verify/feedback_path.sh
           bash scripts/verify/paper_path.sh
+          bash scripts/verify/stale_market.sh

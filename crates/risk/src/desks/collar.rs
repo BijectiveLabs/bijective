@@ -26,16 +26,25 @@ pub struct CollarMark {
 
 /// Whether the proposal's limit price lies within its desk's collar around the mark.
 ///
-/// Only the side that crosses is bounded: a buy above the mark or a sell below it. A passive
-/// price far from the mark rests without harm. A market order carries no price the venue sees.
-/// Its cap and the desk's per-order maximum bound it. A stop must not already be crossed, and a
-/// stop-limit's price is collared around its stop, where it becomes a limit order. A limit price
-/// or a stop with no mark, or with a mark older than `max_age_ns`, is refused.
+/// Every order needs a mark no older than `max_age_ns`, or it is refused: an order decided on a
+/// market the node cannot see as current is not placed, whatever its kind. Only the side that
+/// crosses is bounded: a buy above the mark or a sell below it. A passive price far from the mark
+/// rests without harm. A market order carries no price the venue sees, so its price is not
+/// collared. Its cap and the desk's per-order maximum bound it. A stop must not already be
+/// crossed, and a stop-limit's price is collared around its stop, where it becomes a limit order.
 pub fn within_collar(
     mandates: &MandateBook,
     proposal: &Proposal,
     at: &CollarMark,
 ) -> Result<(), Refusal> {
+    let Some(mark) = at.mark.filter(|m| m.price_scaled > 0) else {
+        return Err(Refusal::NoMarkForCollar { instrument: proposal.instrument.clone() });
+    };
+    let age_ns = at.as_of_ns - mark.observed_at_ns;
+    if age_ns > at.max_age_ns {
+        return Err(Refusal::MarkTooOldForCollar { age_ns, max_age_ns: at.max_age_ns });
+    }
+
     let stop = proposal.terms.stop_price_scaled;
     if proposal.price_scaled.is_none() && stop.is_none() {
         return Ok(());
@@ -44,14 +53,6 @@ pub fn within_collar(
         .get(&proposal.desk)
         .ok_or_else(|| Refusal::UnknownDesk { desk: proposal.desk.clone() })?;
     let collar_bps = mandate.price_collar_bps;
-
-    let Some(mark) = at.mark.filter(|m| m.price_scaled > 0) else {
-        return Err(Refusal::NoMarkForCollar { instrument: proposal.instrument.clone() });
-    };
-    let age_ns = at.as_of_ns - mark.observed_at_ns;
-    if age_ns > at.max_age_ns {
-        return Err(Refusal::MarkTooOldForCollar { age_ns, max_age_ns: at.max_age_ns });
-    }
 
     let reference = match stop {
         Some(stop) => {

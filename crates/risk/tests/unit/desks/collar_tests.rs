@@ -98,11 +98,28 @@ fn a_mark_older_than_the_bound_is_refused() {
     );
 }
 
-/// A market order's cap never reaches the venue. The per-order maximum bounds it instead.
+/// A market order's cap never reaches the venue, so no price is collared. The per-order maximum
+/// bounds it instead, far from the mark or near it.
 #[test]
-fn a_market_order_is_not_collared() {
-    let at = CollarMark { mark: None, as_of_ns: 1_000, max_age_ns: 500 };
+fn a_market_order_is_not_collared_on_price() {
+    let at = mark_at(1, 900);
     assert_eq!(within_collar(&mandates(500), &proposal(Side::Buy, None), &at), Ok(()));
+}
+
+/// A market order is decided on the market as much as a limit order is. With no mark, or one older
+/// than the bound, nothing says the market is the one decided on: a flat book has no position
+/// whose valuation would carry the mark's age, so this is the only place it is judged.
+#[test]
+fn a_market_order_without_a_current_mark_is_refused() {
+    let none = CollarMark { mark: None, as_of_ns: 1_000, max_age_ns: 500 };
+    assert!(matches!(
+        within_collar(&mandates(500), &proposal(Side::Buy, None), &none),
+        Err(Refusal::NoMarkForCollar { .. })
+    ));
+    assert_eq!(
+        within_collar(&mandates(500), &proposal(Side::Sell, None), &mark_at(10_000, 400)),
+        Err(Refusal::MarkTooOldForCollar { age_ns: 600, max_age_ns: 500 })
+    );
 }
 
 #[test]

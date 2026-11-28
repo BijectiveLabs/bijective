@@ -460,7 +460,7 @@ impl core::fmt::Display for Refusal {
                 write!(f, "the stop {stop} is already crossed by the mark {mark}")
             }
             Refusal::NoMarkForCollar { instrument } => {
-                write!(f, "no mark for {instrument} to judge the limit price against")
+                write!(f, "no mark for {instrument} to judge the order against")
             }
             Refusal::MarkTooOldForCollar { age_ns, max_age_ns } => {
                 write!(f, "the mark is {age_ns} ns old, beyond the {max_age_ns} ns bound")
